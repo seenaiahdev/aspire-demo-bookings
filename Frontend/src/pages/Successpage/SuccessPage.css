@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ── Confetti canvas — fixed, full screen, on top of bg, below card ── */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── Page background ── */
+.success-page-bg {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #EEF2FF;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(16,185,129,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(6,182,212,0.14)  0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 60% 50%,  rgba(37,99,235,0.07)  0%, transparent 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient orbs */
+.ambient-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%);
+  filter: blur(70px);
+  top: -160px; left: -120px;
+  animation: orb1drift 18s ease-in-out infinite alternate;
+}
+.orb-2 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(6,182,212,0.16) 0%, transparent 70%);
+  filter: blur(80px);
+  bottom: -200px; right: -150px;
+  animation: orb2drift 22s ease-in-out infinite alternate;
+}
+@keyframes orb1drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(40px,50px) scale(1.1); } }
+@keyframes orb2drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-50px,-40px) scale(1.12); } }
+
+/* ── Card ── */
+.success-card-wrapper {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  max-width: 620px;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 28px;
+  padding: 2.75rem 2.25rem;
+  box-shadow:
+    0 0 0 1px rgba(16,185,129,0.08),
+    0 4px 6px -1px rgba(15,23,42,0.05),
+    0 24px 56px -8px rgba(15,23,42,0.16),
+    0 0 0 4px rgba(255,255,255,0.8) inset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  animation: cardPopUp 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes cardPopUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Brand header */
+.success-brand-header {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 1.4rem;
+}
+.company-brand-title {
+  font-size: 0.72rem; font-weight: 800; color: #1E2A78;
+  letter-spacing: 0.18em; text-transform: uppercase; margin-top: 0.4rem;
+}
+
+/* Checkmark badge */
+.success-badge-ring {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  border: 2.5px solid #10B981;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.35rem;
+  box-shadow: 0 0 0 8px rgba(16,185,129,0.1), 0 0 32px rgba(16,185,129,0.3);
+  animation: ringPulse 2.4s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { box-shadow: 0 0 0 8px rgba(16,185,129,0.08), 0 0 28px rgba(16,185,129,0.25); transform: scale(1); }
+  50%       { box-shadow: 0 0 0 12px rgba(16,185,129,0.14), 0 0 44px rgba(16,185,129,0.45); transform: scale(1.04); }
+}
+.success-check-icon {
+  width: 40px; height: 40px; stroke: #10B981;
+  stroke-dasharray: 55; stroke-dashoffset: 55;
+  animation: drawCheck 0.65s cubic-bezier(0.65,0,0.45,1) 0.35s forwards;
+}
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+/* Header text */
+.success-header-text {
+  display: flex; flex-direction: column; align-items: center; margin-bottom: 1.85rem;
+}
+.success-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1E2A78;
+}
+.success-subtitle {
+  font-size: 0.95rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.65;
+  max-width: 460px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+.user-highlight {
+  color: #2563EB;
+  font-weight: 700;
+}
+
+/* ── Ticket Card ── */
+.ticket-card-modern {
+  width: 100%;
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5FF 100%);
+  border: 1.5px solid #E2E8F0;
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+  box-sizing: border-box;
+  text-align: left;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 2px 12px rgba(15,23,42,0.06);
+}
+.ticket-card-modern:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(37,99,235,0.14);
+}
+.ticket-top {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.9rem;
+}
+.ticket-pass-brand { display: flex; align-items: center; gap: 0.5rem; }
+.ticket-pass-title { font-size: 0.875rem; font-weight: 800; color: #1E2A78; }
+.ticket-code {
+  font-size: 0.75rem; font-family: 'Courier New', monospace; font-weight: 700;
+  color: #475569; background: #E2E8F0; padding: 0.25rem 0.65rem; border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+.ticket-divider-line {
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #CBD5E1 0, #CBD5E1 6px, transparent 6px, transparent 12px);
+  margin-bottom: 1.15rem;
+}
+.ticket-content-body { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.slot-highlight-banner {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border: 1.5px solid #BFDBFE;
+  border-radius: 14px; padding: 0.9rem 1.1rem;
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+.slot-banner-label {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-size: 0.72rem; font-weight: 800;
+  color: #2563EB; text-transform: uppercase; letter-spacing: 0.07em;
+}
+.clock-icon-blue { width: 14px; height: 14px; stroke: #2563EB; }
+.slot-banner-time { font-size: 1.05rem; font-weight: 800; color: #1E2A78; }
+
+.ticket-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 500px) { .ticket-info-grid { grid-template-columns: 1fr; } }
+.info-block { display: flex; flex-direction: column; gap: 0.15rem; }
+.info-label { font-size: 0.72rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.06em; }
+.info-val { font-size: 0.9rem; font-weight: 600; color: #0F172A; word-break: break-word; }
+
+/* ── Action buttons ── */
+.action-buttons-stack { width: 100%; }
+
+.whatsapp-action-btn {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  width: 100%; padding: 1.05rem 1.5rem; box-sizing: border-box;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  border-radius: 16px; color: #FFFFFF;
+  font-size: 1rem; font-weight: 700;
+  font-family: 'Inter', inherit;
+  text-decoration: none;
+  box-shadow: 0 8px 24px -4px rgba(37,211,102,0.45);
+  transition: all 0.25s ease;
+  letter-spacing: 0.01em;
+}
+.whatsapp-action-btn::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 16px 16px 0 0; pointer-events: none;
+}
+.whatsapp-shimmer {
+  position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg); animation: btnShimmer 3.5s infinite;
+}
+@keyframes btnShimmer { 0% { left: -100%; } 35%, 100% { left: 220%; } }
+.whatsapp-action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px -4px rgba(37,211,102,0.55);
+}
+.whatsapp-svg { width: 22px; height: 22px; position: relative; z-index: 1; }
+.whatsapp-action-btn span { position: relative; z-index: 1; }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE OPTIMIZATIONS
+════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .success-page-bg {
+    padding: 1.5rem 0.75rem 3rem;
+  }
+  .success-card-wrapper {
+    padding: 1.75rem 1rem;
+    border-radius: 20px;
+  }
+  .success-title {
+    font-size: 1.7rem;
+  }
+  .success-subtitle {
+    font-size: 0.85rem;
+  }
+  .ticket-card-modern {
+    padding: 1.1rem 0.9rem;
+    border-radius: 16px;
+  }
+  .ticket-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .whatsapp-action-btn {
+    padding: 0.9rem 1.1rem;
+    font-size: 0.925rem;
+    border-radius: 14px;
+  }
+}
