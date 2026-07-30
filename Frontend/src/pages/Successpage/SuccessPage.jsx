@@ -116,6 +116,11 @@ export default function SuccessPage({ registrationData }) {
     registrationId = 'ASP-DEMO-001'
   } = registrationData || {};
 
+  // Scroll to top immediately on mount to show checkmark, title, and confetti
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="success-page-bg">
       {/* Confetti blast */}
@@ -140,10 +145,6 @@ export default function SuccessPage({ registrationData }) {
         </div>
 
         <div className="success-header-text">
-          <div className="confirmed-pill">
-            <span className="live-dot-green" />
-            <span>Slot Reserved</span>
-          </div>
           <h1 className="success-title">Registration Successful!</h1>
           <p className="success-subtitle">
             Thank you, <strong className="user-highlight">{fullName}</strong>! Your seat for the live demo session has been confirmed.

@@ -113,23 +113,6 @@
 .success-header-text {
   display: flex; flex-direction: column; align-items: center; margin-bottom: 1.85rem;
 }
-.confirmed-pill {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.3rem 0.85rem;
-  background: #ECFDF5; border: 1px solid #A7F3D0;
-  border-radius: 9999px; color: #059669;
-  font-size: 0.74rem; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 0.65rem;
-}
-.live-dot-green {
-  width: 7px; height: 7px; background: #10B981;
-  border-radius: 50%; animation: dotBlink 1.8s ease-in-out infinite;
-}
-@keyframes dotBlink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
-}
 .success-title {
   font-size: 2.25rem;
   font-weight: 800;
@@ -242,3 +225,35 @@
 }
 .whatsapp-svg { width: 22px; height: 22px; position: relative; z-index: 1; }
 .whatsapp-action-btn span { position: relative; z-index: 1; }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE OPTIMIZATIONS
+════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .success-page-bg {
+    padding: 1.5rem 0.75rem 3rem;
+  }
+  .success-card-wrapper {
+    padding: 1.75rem 1rem;
+    border-radius: 20px;
+  }
+  .success-title {
+    font-size: 1.7rem;
+  }
+  .success-subtitle {
+    font-size: 0.85rem;
+  }
+  .ticket-card-modern {
+    padding: 1.1rem 0.9rem;
+    border-radius: 16px;
+  }
+  .ticket-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .whatsapp-action-btn {
+    padding: 0.9rem 1.1rem;
+    font-size: 0.925rem;
+    border-radius: 14px;
+  }
+}

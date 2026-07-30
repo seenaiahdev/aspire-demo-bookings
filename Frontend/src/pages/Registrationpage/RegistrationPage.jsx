@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import CompanyLogo from './CompanyLogo';
+import { registerDemoBooking } from '../../services/api';
 import './RegistrationPage.css';
 
 /* ─── DATA ─── */
@@ -17,8 +18,9 @@ const FIELD_OPTIONS = [
 const YEAR_OPTIONS = [
   '1st Year', '2nd Year', '3rd Year', '4th Year', 'Post Graduate / Alumni'
 ];
-const HOURS_24 = Array.from({ length: 24 }, (_, i) => String(i + 1).padStart(2, '0'));
-const MINUTES_LIST = ['00', '15', '30', '45'];
+const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+const MINUTES_LIST = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const PERIODS_LIST = ['AM', 'PM'];
 const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const MONTH_NAMES = [
   'January','February','March','April','May','June',
@@ -132,26 +134,35 @@ function SearchableSelect({ id, name, value, onChange, onBlur, options, placehol
 /* ══════════════════════════════════════════════
    ScrollDrum — iOS-style scroll drum column
 ══════════════════════════════════════════════ */
-function ScrollDrum({ items, selected, onSelect, label }) {
+function ScrollDrum({ items, selected, onSelect }) {
   const containerRef = useRef(null);
   const scrollTimer = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const idx = items.indexOf(selected);
+    return idx !== -1 ? idx : 0;
+  });
 
   useEffect(() => {
     const idx = items.indexOf(selected);
-    if (idx === -1 || !containerRef.current) return;
-    containerRef.current.scrollTop = idx * ITEM_HEIGHT;
+    if (idx !== -1) {
+      setActiveIndex(idx);
+      if (containerRef.current) {
+        containerRef.current.scrollTop = idx * ITEM_HEIGHT;
+      }
+    }
   }, [selected, items]);
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
+    const scrollTop = containerRef.current.scrollTop;
+    const idx = Math.round(scrollTop / ITEM_HEIGHT);
+    const clampedIdx = Math.max(0, Math.min(idx, items.length - 1));
+    setActiveIndex(clampedIdx);
+
     clearTimeout(scrollTimer.current);
     scrollTimer.current = setTimeout(() => {
-      const scrollTop = containerRef.current.scrollTop;
-      const idx = Math.round(scrollTop / ITEM_HEIGHT);
-      const snappedIdx = Math.max(0, Math.min(idx, items.length - 1));
-      containerRef.current.scrollTop = snappedIdx * ITEM_HEIGHT;
-      onSelect(items[snappedIdx]);
-    }, 120);
+      onSelect(items[clampedIdx]);
+    }, 80);
   }, [items, onSelect]);
 
   return (
@@ -162,13 +173,13 @@ function ScrollDrum({ items, selected, onSelect, label }) {
         <div className="drum-fade drum-fade-bottom" />
         <div className="drum-scroll-track" ref={containerRef} onScroll={handleScroll}>
           <div className="drum-spacer" />
-          {items.map((item) => (
+          {items.map((item, idx) => (
             <div
               key={item}
-              className={`drum-item ${selected === item ? 'drum-item-selected' : ''}`}
+              className={`drum-item ${activeIndex === idx ? 'drum-item-selected' : ''}`}
               onClick={() => {
+                setActiveIndex(idx);
                 onSelect(item);
-                const idx = items.indexOf(item);
                 if (containerRef.current)
                   containerRef.current.scrollTo({ top: idx * ITEM_HEIGHT, behavior: 'smooth' });
               }}
@@ -202,15 +213,16 @@ export default function RegistrationPage({ onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [duplicateError, setDuplicateError] = useState('');
 
-  const [showCalendar, setShowCalendar]   = useState(false);
+  const [showCalendar, setShowCalendar]     = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [calMonth, setCalMonth] = useState(today.getMonth());
-  const [calYear, setCalYear]   = useState(today.getFullYear());
-  const [selectedDate, setSelectedDate]   = useState('');
+  const [calMonth, setCalMonth]             = useState(today.getMonth());
+  const [calYear, setCalYear]               = useState(today.getFullYear());
+  const [selectedDate, setSelectedDate]       = useState('');
   const [selectedDateObj, setSelectedDateObj] = useState(null);
-  const [selectedHour, setSelectedHour]   = useState('09');
+  const [selectedHour, setSelectedHour]     = useState('10');
   const [selectedMinute, setSelectedMinute] = useState('00');
-  const [timeConfirmed, setTimeConfirmed] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState('AM');
+  const [timeConfirmed, setTimeConfirmed]   = useState(false);
 
   /* Calendar grid */
   const calendarDays = useMemo(() => {
@@ -273,7 +285,7 @@ export default function RegistrationPage({ onSuccess }) {
   };
 
   const confirmTime = () => {
-    const slot = `${selectedDate} @ ${selectedHour}:${selectedMinute} hrs`;
+    const slot = `${selectedDate} @ ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
     setFormData(p => ({ ...p, demoSlot: slot }));
     setTouched(p => ({ ...p, demoSlot: true }));
     setErrors(p => ({ ...p, demoSlot: '' }));
@@ -281,18 +293,7 @@ export default function RegistrationPage({ onSuccess }) {
     setShowTimePicker(false);
   };
 
-  const checkDuplicate = (email, mobile) => {
-    try {
-      const existing = JSON.parse(localStorage.getItem('aspire_registrations') || '[]');
-      if (existing.some(r => r.email.toLowerCase() === email.toLowerCase()))
-        return 'This email address is already registered.';
-      if (existing.some(r => r.mobile === mobile))
-        return 'This mobile number is already registered.';
-    } catch (_) {}
-    return '';
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     let hasErrors = false;
@@ -305,20 +306,30 @@ export default function RegistrationPage({ onSuccess }) {
     setTouched(allTouched);
     setErrors(newErrors);
     if (hasErrors) return;
-    const dupErr = checkDuplicate(formData.email.trim(), formData.mobile.trim());
-    if (dupErr) { setDuplicateError(dupErr); return; }
+
+    setDuplicateError('');
     setIsSubmitting(true);
-    setTimeout(() => {
-      const regId = 'ASP-' + Math.floor(100000 + Math.random() * 900000);
-      const record = { ...formData, registrationId: regId, submittedAt: new Date().toISOString() };
-      try {
-        const existing = JSON.parse(localStorage.getItem('aspire_registrations') || '[]');
-        existing.push(record);
-        localStorage.setItem('aspire_registrations', JSON.stringify(existing));
-      } catch (_) {}
+
+    try {
+      // Direct call to Express Backend + Supabase Database
+      const result = await registerDemoBooking(formData);
+
+      if (result.token) {
+        sessionStorage.setItem('aspire_booking_jwt', result.token);
+      }
+
       setIsSubmitting(false);
-      if (onSuccess) onSuccess(record);
-    }, 1500);
+      if (onSuccess) onSuccess(result.data || formData);
+    } catch (err) {
+      setIsSubmitting(false);
+      if (err.status === 409) {
+        setDuplicateError(err.message || 'Duplicate submission detected in database.');
+      } else if (err.errors) {
+        setErrors(prev => ({ ...prev, ...err.errors }));
+      } else {
+        setDuplicateError(err.message || 'Server error. Please try again.');
+      }
+    }
   };
 
   const prevMonth = () => {
@@ -352,7 +363,7 @@ export default function RegistrationPage({ onSuccess }) {
         {/* Brand Header */}
         <div className="form-brand-header">
           <div className="company-logo-container">
-            <CompanyLogo width={72} height={72} />
+            <CompanyLogo width={76} height={76} />
           </div>
           <div className="company-brand-title">AspireNext Edu Tech</div>
           <h1 className="form-main-title">Reserve Your Free Demo</h1>
@@ -514,7 +525,7 @@ export default function RegistrationPage({ onSuccess }) {
                     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                   </svg>
                   <span className={`slot-field-text ${timeConfirmed ? 'filled' : 'placeholder'}`}>
-                    {timeConfirmed ? `${selectedHour}:${selectedMinute} hrs` : 'Select Time'}
+                    {timeConfirmed ? `${selectedHour}:${selectedMinute} ${selectedPeriod}` : 'Select Time'}
                   </span>
                   {timeConfirmed
                     ? <svg className="slot-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -522,34 +533,38 @@ export default function RegistrationPage({ onSuccess }) {
                   }
                 </div>
 
-                {/* SCROLL DRUM TIME PICKER */}
+                {/* 3-COLUMN TIME PICKER (12H / 00-59 / AM-PM) */}
                 <div className={`inline-time-picker ${showTimePicker ? 'time-open' : 'time-closed'}`}>
                   <div className="drum-picker-header">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    <span>Scroll to pick time</span>
+                    <span>Select Time (12-Hour Format)</span>
                   </div>
 
-                  {/* Labels row — outside the masked area */}
+                  {/* Labels row */}
                   <div className="drum-labels-row">
-                    <span className="drum-col-label">Hour (24h)</span>
-                    <span className="drum-col-spacer" />
-                    <span className="drum-col-label">Min</span>
+                    <span className="drum-col-label">Hour (1-12)</span>
+                    <span className="drum-col-spacer-sm" />
+                    <span className="drum-col-label">Min (00-59)</span>
+                    <span className="drum-col-spacer-sm" />
+                    <span className="drum-col-label">AM / PM</span>
                   </div>
 
-                  {/* Drums row — masked + shared band here */}
+                  {/* 3 Drums row */}
                   <div className="drum-scrollers-row">
-                    <ScrollDrum items={HOURS_24} selected={selectedHour} onSelect={setSelectedHour} label={null} />
+                    <ScrollDrum items={HOURS_12} selected={selectedHour} onSelect={setSelectedHour} />
                     <div className="drum-colon">:</div>
-                    <ScrollDrum items={MINUTES_LIST} selected={selectedMinute} onSelect={setSelectedMinute} label={null} />
+                    <ScrollDrum items={MINUTES_LIST} selected={selectedMinute} onSelect={setSelectedMinute} />
+                    <div className="drum-colon-space" />
+                    <ScrollDrum items={PERIODS_LIST} selected={selectedPeriod} onSelect={setSelectedPeriod} />
                   </div>
 
                   {/* Footer */}
                   <div className="drum-picker-footer">
                     <div className="drum-time-preview">
                       <span className="preview-time">{selectedHour}:{selectedMinute}</span>
-                      <span className="preview-hrs">hrs</span>
+                      <span className="preview-period">{selectedPeriod}</span>
                     </div>
                     <button type="button" className="drum-confirm-btn" onClick={confirmTime}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
