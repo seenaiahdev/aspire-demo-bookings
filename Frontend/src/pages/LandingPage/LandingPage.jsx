@@ -119,12 +119,6 @@ const LandingPage = () => {
       <section className="hero" id="home">
         <div className="hero-content">
           <div className="hero-left">
-            <div className="hero-badge">
-              <span className="live-dot"></span>
-              <span>FREE LIVE DEMO SESSION</span>
-              <span className="badge-highlight">THIS SATURDAY</span>
-            </div>
-
             <h1>
               Build Your Tech Future With <span>Aspire Next</span>
             </h1>
@@ -135,33 +129,8 @@ const LandingPage = () => {
 
             <div className="hero-actions">
               <button className="hero-btn primary-glow">
-                Reserve Free Demo Seat <FaArrowRight className="btn-icon" />
+                Register Now <FaArrowRight className="btn-icon" />
               </button>
-              <a href="#courses" className="secondary-btn">
-                View Curriculum
-              </a>
-            </div>
-
-            <div className="hero-stats-row">
-              <div className="stat-item">
-                <h3>5,000+</h3>
-                <p>Students Trained</p>
-              </div>
-              <div className="stat-divider"></div>
-              <div className="stat-item">
-                <h3>98%</h3>
-                <p>Placement Support Rate</p>
-              </div>
-              <div className="stat-divider"></div>
-              <div className="stat-item">
-                <div className="rating-box">
-                  <span>4.9</span>
-                  <div className="stars">
-                    <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
-                  </div>
-                </div>
-                <p>Student Rating</p>
-              </div>
             </div>
           </div>
 
@@ -354,13 +323,6 @@ const LandingPage = () => {
                 <li><a href="#courses">Course Timeline</a></li>
                 <li><a href="#companies">Hiring Companies</a></li>
               </ul>
-            </div>
-
-            <div className="footer-contact">
-              <h4>Demo Schedule</h4>
-              <p>📅 Every Saturday & Sunday</p>
-              <p>⏰ 10:00 AM & 5:00 PM IST</p>
-              <button className="footer-register-btn">Book Free Demo Seat</button>
             </div>
           </div>
 
