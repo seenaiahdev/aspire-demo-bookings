@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LandingPage.css";
 import logo from "../../assets/AspireLogo.jpg";
 import {
@@ -77,6 +77,29 @@ const timelineSteps = [
 const LandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+        }
+      });
+    };
+
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: "0px 0px -40px 0px",
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const rows = document.querySelectorAll(".timeline-card-row");
+    rows.forEach((row) => observer.observe(row));
+
+    return () => {
+      rows.forEach((row) => observer.unobserve(row));
+    };
+  }, []);
+
   return (
     <div className="landing-page">
       {/* Background Decorative Ambient Lights */}
@@ -97,8 +120,8 @@ const LandingPage = () => {
 
           <ul className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
             <li><a href="#home" onClick={() => setMobileMenuOpen(false)}>Home</a></li>
-            <li><a href="#why-join" onClick={() => setMobileMenuOpen(false)}>Why Demo</a></li>
-            <li><a href="#courses" onClick={() => setMobileMenuOpen(false)}>Course Timeline</a></li>
+            <li><a href="#why-join" onClick={() => setMobileMenuOpen(false)}>Why Join</a></li>
+            <li><a href="#courses" onClick={() => setMobileMenuOpen(false)}>Curriculum</a></li>
             <li><a href="#companies" onClick={() => setMobileMenuOpen(false)}>Companies</a></li>
           </ul>
 
