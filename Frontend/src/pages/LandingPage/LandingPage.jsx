@@ -1,185 +1,386 @@
+import React, { useState } from "react";
 import "./LandingPage.css";
 import logo from "../../assets/AspireLogo.jpg";
 import {
   FaCalendarAlt,
   FaClock,
-  FaLaptop,
+  FaLaptopCode,
   FaUserGraduate,
-  FaFacebook,
+  FaFacebookF,
   FaTwitter,
   FaInstagram,
-  FaLinkedin,
+  FaLinkedinIn,
+  FaCheckCircle,
+  FaArrowRight,
+  FaStar,
+  FaRocket,
+  FaBars,
+  FaTimes,
+  FaGraduationCap,
+  FaBriefcase,
+  FaCode,
+  FaAward
 } from "react-icons/fa";
 
+const companies = [
+  { name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+  { name: "Microsoft", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
+  { name: "Amazon", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
+  { name: "Meta", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" },
+  { name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" },
+  { name: "IBM", logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" },
+  { name: "Netflix", logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" },
+  { name: "Spotify", logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" },
+  { name: "Adobe", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Adobe_Systems_logo_2017.svg" },
+  { name: "Salesforce", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" },
+];
+
+const timelineSteps = [
+  {
+    step: "01",
+    month: "Month 1",
+    title: "Web Foundations & Modern JS",
+    description: "Master semantic HTML5, modern CSS flex/grid, ES6+ JavaScript, DOM manipulation, git version control, and responsive design principles.",
+    duration: "4 Weeks",
+    icon: <FaCode />,
+    skills: ["HTML5", "CSS3", "JavaScript ES6+", "Git & GitHub", "Responsive Design"]
+  },
+  {
+    step: "02",
+    month: "Month 2",
+    title: "React Ecosystem & Dynamic Apps",
+    description: "Build component-driven single-page applications with React, custom Hooks, State Management, API integration, and modern UI library patterns.",
+    duration: "4 Weeks",
+    icon: <FaRocket />,
+    skills: ["React 19", "React Router", "State Management", "REST APIs", "Vite"]
+  },
+  {
+    step: "03",
+    month: "Month 3",
+    title: "Backend Architecture & Databases",
+    description: "Develop scalable RESTful microservices with Node.js & Express, relational & NoSQL databases, JWT authentication, and secure API endpoints.",
+    duration: "4 Weeks",
+    icon: <FaBriefcase />,
+    skills: ["Node.js", "Express.js", "MongoDB", "PostgreSQL", "JWT Auth"]
+  },
+  {
+    step: "04",
+    month: "Month 4",
+    title: "Capstone, DevOps & Career Launch",
+    description: "Deploy end-to-end fullstack projects to cloud platforms, undergo mock technical interviews, optimize resume, and get direct job referral access.",
+    duration: "4 Weeks",
+    icon: <FaAward />,
+    skills: ["Fullstack Project", "CI/CD & Cloud", "System Design", "Mock Interviews", "Placement Support"]
+  }
+];
+
 const LandingPage = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <div className="landing-page">
-      <nav className="navbar">
-        <div className="logo">
-          <img src={logo} alt="Aspire Next Logo" className="logo-img" />
-          <div className="logo-text">
-            <h2>Aspire Next</h2>
-            <p>Aspire Your Dreams</p>
+      {/* Background Decorative Ambient Lights */}
+      <div className="ambient-glow glow-1"></div>
+      <div className="ambient-glow glow-2"></div>
+      <div className="ambient-glow glow-3"></div>
+
+      {/* Navigation Header */}
+      <nav className="navbar-container">
+        <div className="navbar">
+          <div className="logo">
+            <img src={logo} alt="Aspire Next Logo" className="logo-img" />
+            <div className="logo-text">
+              <h2>Aspire Next</h2>
+              <p>Aspire Your Dreams</p>
+            </div>
+          </div>
+
+          <ul className={`nav-links ${mobileMenuOpen ? "active" : ""}`}>
+            <li><a href="#home" onClick={() => setMobileMenuOpen(false)}>Home</a></li>
+            <li><a href="#why-join" onClick={() => setMobileMenuOpen(false)}>Why Demo</a></li>
+            <li><a href="#courses" onClick={() => setMobileMenuOpen(false)}>Course Timeline</a></li>
+            <li><a href="#companies" onClick={() => setMobileMenuOpen(false)}>Companies</a></li>
+          </ul>
+
+          <div className="nav-actions">
+            <button className="register-btn glow-btn">Register Now</button>
+            <button 
+              className="mobile-toggle-btn" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
           </div>
         </div>
-
-        <ul className="nav-links">
-          <li>
-            <a href="#home">Home</a>
-          </li>
-          <li>
-            <a href="#why-join">Why Demo</a>
-          </li>
-          <li>
-            <a href="#courses">Course Timeline</a>
-          </li>
-          <li>
-            <a href="#companies">Companies</a>
-          </li>
-        </ul>
-
-        <button className="register-btn">Register Now</button>
       </nav>
 
+      {/* Hero Section */}
       <section className="hero" id="home">
-        <div className="hero-left">
-          <p className="eyebrow">Student Demo Portal</p>
-          <h1>
-            Welcome to <span>Aspire Next</span>
-          </h1>
-          <p>
-            Join our free online demo session and discover how Aspire Next
-            helps students become industry-ready through expert mentorship,
-            practical learning, and career guidance.
-          </p>
-          <div className="hero-actions">
-            <button className="hero-btn">Register Now</button>
-            <a href="#why-join" className="secondary-link">
-              Explore Demo
-            </a>
-          </div>
-        </div>
+        <div className="hero-content">
+          <div className="hero-left">
+            <div className="hero-badge">
+              <span className="live-dot"></span>
+              <span>FREE LIVE DEMO SESSION</span>
+              <span className="badge-highlight">THIS SATURDAY</span>
+            </div>
 
-        <div className="hero-right">
-          <div className="hero-card">
-            <img
-              src="https://img.magnific.com/free-photo/young-attractive-smiling-student-showing-thumb-up-outdoors-campus-university_8353-6394.jpg"
-              alt="Happy student"
-            />
-            <div className="hero-card-badge">
-              <span>Live Demo</span>
-              <strong>Every Saturday</strong>
+            <h1>
+              Build Your Tech Future With <span>Aspire Next</span>
+            </h1>
+
+            <p className="hero-description">
+              Transform your passion into a high-paying tech career. Join our interactive, expert-led live demo session and discover our industry-proven full-stack roadmap.
+            </p>
+
+            <div className="hero-actions">
+              <button className="hero-btn primary-glow">
+                Reserve Free Demo Seat <FaArrowRight className="btn-icon" />
+              </button>
+              <a href="#courses" className="secondary-btn">
+                View Curriculum
+              </a>
+            </div>
+
+            <div className="hero-stats-row">
+              <div className="stat-item">
+                <h3>5,000+</h3>
+                <p>Students Trained</p>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat-item">
+                <h3>98%</h3>
+                <p>Placement Support Rate</p>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat-item">
+                <div className="rating-box">
+                  <span>4.9</span>
+                  <div className="stars">
+                    <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
+                  </div>
+                </div>
+                <p>Student Rating</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="hero-right">
+            <div className="hero-card-wrapper">
+              <div className="card-glow-bg"></div>
+              <div className="hero-card">
+                <img
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80"
+                  alt="Students collaborating at Aspire Next"
+                  className="hero-image"
+                />
+                <div className="glass-floating-tag tag-top">
+                  <FaGraduationCap className="tag-icon" />
+                  <div>
+                    <strong>Industry Experts</strong>
+                    <span>1-on-1 Mentorship</span>
+                  </div>
+                </div>
+                <div className="glass-floating-tag tag-bottom">
+                  <FaCheckCircle className="tag-icon check-icon" />
+                  <div>
+                    <strong>Guaranteed Projects</strong>
+                    <span>Real-world portfolio</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Why Join Demo Section */}
       <section className="why-join" id="why-join">
-        <div className="section-header">
-          <p className="section-label">Why Join Our Demo?</p>
-          <h2>See what makes our program unique</h2>
-          <p className="section-copy">
-            Learn from industry experts, build real projects, and get the
-            confidence to step into your first role.
-          </p>
-        </div>
+        <div className="section-container">
+          <div className="section-header center">
+            <span className="section-label">WHY JOIN OUR DEMO?</span>
+            <h2>Experience The Aspire Next Advantage</h2>
+            <p className="section-copy">
+              Our live demo gives you an insider look into how we help complete beginners and aspiring devs transform into confident software engineers.
+            </p>
+          </div>
 
-        <div className="benefits">
-          <div className="benefit">
-            <FaCalendarAlt className="icon" />
-            <h3>Flexible Scheduling</h3>
-            <p>Choose a demo time that fits your routine.</p>
-          </div>
-          <div className="benefit">
-            <FaClock className="icon" />
-            <h3>Fast Results</h3>
-            <p>Get practical insights in a short, focused session.</p>
-          </div>
-          <div className="benefit">
-            <FaLaptop className="icon" />
-            <h3>Hands-On Learning</h3>
-            <p>Experience real tools and real workflows from day one.</p>
-          </div>
-          <div className="benefit">
-            <FaUserGraduate className="icon" />
-            <h3>Mentor Support</h3>
-            <p>Receive guidance from professionals who know the industry.</p>
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <div className="benefit-icon-wrapper">
+                <FaCalendarAlt className="icon" />
+              </div>
+              <h3>Flexible Demo Schedule</h3>
+              <p>Choose convenient weekend or evening demo slots tailored to fit your busy schedule.</p>
+              <div className="card-accent-line"></div>
+            </div>
+
+            <div className="benefit-card">
+              <div className="benefit-icon-wrapper">
+                <FaClock className="icon" />
+              </div>
+              <h3>Fast-Track Roadmap</h3>
+              <p>Get a clear 16-week execution plan detailing every technology required for modern jobs.</p>
+              <div className="card-accent-line"></div>
+            </div>
+
+            <div className="benefit-card">
+              <div className="benefit-icon-wrapper">
+                <FaLaptopCode className="icon" />
+              </div>
+              <h3>Hands-On Project Labs</h3>
+              <p>Work on live coding exercises during the demo and experience our interactive learning portal.</p>
+              <div className="card-accent-line"></div>
+            </div>
+
+            <div className="benefit-card">
+              <div className="benefit-icon-wrapper">
+                <FaUserGraduate className="icon" />
+              </div>
+              <h3>Direct Mentor Guidance</h3>
+              <p>Interact live with senior engineers from top tech firms and clarify all your career questions.</p>
+              <div className="card-accent-line"></div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Course Timeline Section */}
       <section className="timeline-section" id="courses">
-        <div className="section-header center">
-          <p className="section-label">Course Timeline</p>
-          <h2>Your path to career-ready skills</h2>
-        </div>
+        <div className="section-container">
+          <div className="section-header center">
+            <span className="section-label">CURRICULUM ROADMAP</span>
+            <h2>Attractive & Structured Course Timeline</h2>
+            <p className="section-copy">
+              Step-by-step 4-month immersive learning track designed with advanced tech stacks and industry standards.
+            </p>
+          </div>
 
-        <div className="timeline">
-          <div className="timeline-item">
-            <div className="timeline-circle">1</div>
-            <div className="timeline-content">
-              <h3>Month 1</h3>
-              <p>Programming fundamentals, HTML, CSS, JavaScript, and Git.</p>
-              <span className="duration-badge">4 Weeks</span>
-            </div>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-circle">2</div>
-            <div className="timeline-content">
-              <h3>Month 2</h3>
-              <p>React, component design, state management, and APIs.</p>
-              <span className="duration-badge">4 Weeks</span>
-            </div>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-circle">3</div>
-            <div className="timeline-content">
-              <h3>Month 3</h3>
-              <p>Node, Express, databases, authentication, and backend APIs.</p>
-              <span className="duration-badge">4 Weeks</span>
-            </div>
-          </div>
-          <div className="timeline-item">
-            <div className="timeline-circle">4</div>
-            <div className="timeline-content">
-              <h3>Month 4</h3>
-              <p>Capstone project, interview prep, and career support.</p>
-              <span className="duration-badge">4 Weeks</span>
-            </div>
+          <div className="advanced-timeline">
+            <div className="timeline-central-line"></div>
+
+            {timelineSteps.map((item, index) => (
+              <div 
+                className={`timeline-card-row ${index % 2 === 0 ? "row-left" : "row-right"}`} 
+                key={index}
+              >
+                <div className="timeline-node">
+                  <span className="node-number">{item.step}</span>
+                  <div className="node-pulse"></div>
+                </div>
+
+                <div className="timeline-card">
+                  <div className="card-header">
+                    <div className="month-badge-wrap">
+                      <span className="month-badge">{item.month}</span>
+                      <span className="duration-pill"><FaClock /> {item.duration}</span>
+                    </div>
+                    <div className="card-icon">{item.icon}</div>
+                  </div>
+
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+
+                  <div className="skills-tags">
+                    {item.skills.map((skill, sIdx) => (
+                      <span key={sIdx} className="skill-chip">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Companies Section - Infinite Marquee */}
       <section className="companies-section" id="companies">
-        <div className="section-header center">
-          <p className="section-label">Trusted by companies</p>
-          <h2>Top employers love our students</h2>
+        <div className="section-container">
+          <div className="section-header center">
+            <span className="section-label">TOP EMPLOYERS</span>
+            <h2>Our Alumni Work at Top Companies</h2>
+            <p className="section-copy">
+              Graduates from Aspire Next have been placed at industry leaders and fast-growing tech unicorns.
+            </p>
+          </div>
         </div>
 
-        <div className="companies-track">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM" />
+        {/* Infinite Moving Marquee Ticker (Right to Left) */}
+        <div className="marquee-wrapper">
+          <div className="marquee-fade-left"></div>
+          <div className="marquee-fade-right"></div>
+
+          <div className="marquee-track">
+            {/* First Set of Logos */}
+            {companies.map((comp, idx) => (
+              <div key={`comp-1-${idx}`} className="company-logo-card">
+                <img src={comp.logo} alt={comp.name} title={comp.name} />
+                <span>{comp.name}</span>
+              </div>
+            ))}
+            {/* Second Set of Logos (for continuous loop) */}
+            {companies.map((comp, idx) => (
+              <div key={`comp-2-${idx}`} className="company-logo-card">
+                <img src={comp.logo} alt={comp.name} title={comp.name} />
+                <span>{comp.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="footer">
-        <p>© 2026 Aspire Next. All Rights Reserved.</p>
-        <div className="social-icons">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-            <FaFacebook />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-            <FaTwitter />
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-            <FaInstagram />
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-            <FaLinkedin />
-          </a>
+        <div className="footer-container">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <div className="logo">
+                <img src={logo} alt="Aspire Next Logo" className="logo-img" />
+                <div className="logo-text">
+                  <h2>Aspire Next</h2>
+                  <p>Aspire Your Dreams</p>
+                </div>
+              </div>
+              <p className="brand-desc">
+                Empowering students and job-seekers to master fullstack web engineering through practical mentorship, live projects, and dedicated career guidance.
+              </p>
+            </div>
+
+            <div className="footer-links-group">
+              <h4>Quick Links</h4>
+              <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#why-join">Why Demo</a></li>
+                <li><a href="#courses">Course Timeline</a></li>
+                <li><a href="#companies">Hiring Companies</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-contact">
+              <h4>Demo Schedule</h4>
+              <p>📅 Every Saturday & Sunday</p>
+              <p>⏰ 10:00 AM & 5:00 PM IST</p>
+              <button className="footer-register-btn">Book Free Demo Seat</button>
+            </div>
+          </div>
+
+          <div className="footer-bottom">
+            <p>© 2026 Aspire Next. All Rights Reserved.</p>
+            <div className="social-icons">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <FaFacebookF />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                <FaTwitter />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <FaInstagram />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <FaLinkedinIn />
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
@@ -187,3 +388,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
