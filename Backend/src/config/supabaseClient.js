@@ -1,3 +1,8 @@
+/**
+ * supabaseClient.js — Supabase Client Configuration
+ * Initializes and exports the Supabase client instance using environment credentials.
+ */
+
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
@@ -8,7 +13,6 @@ if (!supabaseUrl || supabaseUrl.includes('your-project-ref')) {
   console.warn('[Supabase Warning] SUPABASE_URL is not set or using placeholder in .env file');
 }
 
-// Create Supabase client instance
 const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseKey || 'placeholder-key',

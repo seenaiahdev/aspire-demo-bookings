@@ -1,12 +1,8 @@
-/* ════════════════════════════════════════════════════════════
-   ASPIRE NEXT — PREMIUM REGISTRATION UI
-   Advanced · Professional · Modern Design System
-════════════════════════════════════════════════════════════ */
+/* RegistrationPage.css — Stylesheet for AspireNext demo registration page layout, custom drum time picker, and responsive design. */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Brand Palette */
   --navy:        #0F1C5E;
   --blue-600:    #2563EB;
   --blue-500:    #3B82F6;
@@ -14,7 +10,6 @@
   --cyan-500:    #06B6D4;
   --cyan-400:    #22D3EE;
 
-  /* Neutral Scale */
   --dark:        #0A0F1E;
   --slate-800:   #1E293B;
   --slate-700:   #334155;
@@ -25,7 +20,6 @@
   --slate-50:    #F8FAFC;
   --white:       #FFFFFF;
 
-  /* Semantic */
   --error:       #EF4444;
   --error-bg:    #FEF2F2;
   --success:     #10B981;
@@ -35,7 +29,6 @@
   --warning-border: #FDE68A;
   --warning-text: #92400E;
 
-  /* Shadows */
   --shadow-xs:   0 1px 2px rgba(0,0,0,0.05);
   --shadow-sm:   0 2px 8px rgba(15,28,94,0.06);
   --shadow-md:   0 8px 24px rgba(15,28,94,0.10);
@@ -48,7 +41,6 @@
   --shadow-blue: 0 8px 24px -4px rgba(37,99,235,0.35);
   --shadow-input-focus: 0 0 0 4px rgba(37,99,235,0.12), 0 1px 3px rgba(0,0,0,0.08);
 
-  /* Radius */
   --r-sm:  8px;
   --r-md:  12px;
   --r-lg:  16px;
@@ -56,19 +48,14 @@
   --r-2xl: 28px;
   --r-full: 9999px;
 
-  /* Drum */
   --drum-item-h: 46px;
   --drum-visible-items: 5;
 
-  /* Transitions */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ════════════════════════════════════════════════════════════
-   PAGE — Mesh gradient background
-════════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 .registration-page-bg {
@@ -89,7 +76,6 @@
   overflow-x: hidden;
 }
 
-/* Floating orbs */
 .ambient-orb {
   position: fixed;
   border-radius: 50%;
@@ -126,9 +112,6 @@
   100% { transform: translate(-50px,-40px) scale(1.12); }
 }
 
-/* ════════════════════════════════════════════════════════════
-   CARD
-════════════════════════════════════════════════════════════ */
 .registration-card-wrapper {
   position: relative;
   z-index: 1;
@@ -148,7 +131,6 @@
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
-/* Tactile Error Shake Animation */
 .is-shaking {
   animation: formShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both !important;
 }
@@ -158,13 +140,6 @@
   30%, 60%, 90% { transform: translateX(9px); }
 }
 
-
-/* ════════════════════════════════════════════════════════════
-   BRAND HEADER
-════════════════════════════════════════════════════════════ */
-/* ════════════════════════════════════════════════════════════
-   BRAND HEADER — TOP OF FORM
-════════════════════════════════════════════════════════════ */
 .form-brand-header {
   display: flex;
   flex-direction: column;
@@ -249,9 +224,6 @@
   max-width: 480px;
 }
 
-/* ════════════════════════════════════════════════════════════
-   ALERT
-════════════════════════════════════════════════════════════ */
 .alert-banner {
   display: flex;
   align-items: center;
@@ -275,9 +247,6 @@
 }
 .alert-icon { width: 20px; height: 20px; stroke: #DC2626; flex-shrink: 0; }
 
-/* ════════════════════════════════════════════════════════════
-   FORM LAYOUT
-════════════════════════════════════════════════════════════ */
 .registration-form { display: flex; flex-direction: column; gap: 1.4rem; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
@@ -293,7 +262,6 @@
 }
 .required-star { color: var(--error); font-size: 0.9rem; }
 
-/* ── INPUT FIELDS ── */
 .input-wrapper { position: relative; display: flex; align-items: center; }
 .input-icon {
   position: absolute;
@@ -355,9 +323,6 @@
 }
 .error-icon { width: 13px; height: 13px; stroke: var(--error); flex-shrink: 0; }
 
-/* ════════════════════════════════════════════════════════════
-   SEARCHABLE SELECT
-════════════════════════════════════════════════════════════ */
 .ss-wrapper { position: relative; }
 
 .ss-trigger {
@@ -408,7 +373,6 @@
 }
 .ss-chevron.rotate { transform: rotate(180deg); stroke: var(--blue-600); }
 
-/* Dropdown Panel */
 .ss-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -428,7 +392,6 @@
 .ss-dropdown-open { max-height: 300px; opacity: 1; transform: scaleY(1); }
 .ss-dropdown:not(.ss-dropdown-open) { max-height: 0; opacity: 0; transform: scaleY(0.92); pointer-events: none; }
 
-/* Search Bar */
 .ss-search-bar {
   position: relative;
   display: flex;
@@ -465,7 +428,6 @@
 .ss-clear-search:hover { color: var(--error); }
 .ss-clear-search svg { width: 13px; height: 13px; }
 
-/* Options */
 .ss-options-list {
   overflow-y: auto;
   max-height: 210px;
@@ -514,9 +476,6 @@
   font-size: 0.875rem;
 }
 
-/* ════════════════════════════════════════════════════════════
-   SLOT SECTION
-════════════════════════════════════════════════════════════ */
 .slot-section-wrapper {
   display: flex;
   flex-direction: column;
@@ -535,7 +494,6 @@
   margin-bottom: 0.2rem;
 }
 
-/* Slot trigger fields */
 .slot-input-field {
   display: flex;
   align-items: center;
@@ -577,9 +535,6 @@
 .slot-check-icon   { width: 17px; height: 17px; stroke: var(--success); flex-shrink: 0; }
 .slot-chevron-icon { width: 17px; height: 17px; stroke: var(--slate-400); flex-shrink: 0; transition: transform 0.25s var(--ease-spring); }
 
-/* ════════════════════════════════════════════════════════════
-   INLINE CALENDAR — Clean premium design
-════════════════════════════════════════════════════════════ */
 .inline-calendar {
   background: var(--white);
   border: 1.5px solid rgba(37,99,235,0.12);
@@ -595,7 +550,6 @@
 .cal-open   { max-height: 460px; opacity: 1; transform: scaleY(1); }
 .cal-closed { max-height: 0;     opacity: 0; transform: scaleY(0.92); pointer-events: none; }
 
-/* Clean white month navigation */
 .cal-month-nav {
   display: flex;
   align-items: center;
@@ -655,7 +609,6 @@
   padding: 0.7rem 1.1rem 0.8rem;
 }
 
-/* Day buttons */
 .cal-day {
   width: 36px; height: 36px;
   margin: 0 auto;
@@ -678,7 +631,6 @@
   transform: scale(1.12);
 }
 
-/* Past dates */
 .cal-day-past {
   color: var(--slate-200) !important;
   cursor: not-allowed !important;
@@ -688,7 +640,6 @@
 }
 .cal-day-past:hover { transform: none !important; background: transparent !important; border-color: transparent !important; }
 
-/* Today */
 .cal-day.today {
   border-color: var(--blue-600);
   color: var(--blue-600);
@@ -696,7 +647,6 @@
   background: rgba(37,99,235,0.08);
   box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
 }
-/* Selected */
 .cal-day.selected {
   background: linear-gradient(135deg, var(--blue-600) 0%, var(--navy) 100%) !important;
   border-color: transparent !important;
@@ -706,11 +656,6 @@
   transform: scale(1.18);
 }
 
-
-
-/* ════════════════════════════════════════════════════════════
-   SCROLL DRUM TIME PICKER — Clean White Design System
-════════════════════════════════════════════════════════════ */
 .inline-time-picker {
   background: #FFFFFF;
   border: 1.5px solid rgba(37,99,235,0.14);
@@ -728,7 +673,6 @@
 .time-open   { max-height: 420px; opacity: 1; transform: scaleY(1); }
 .time-closed { max-height: 0;     opacity: 0; transform: scaleY(0.92); pointer-events: none; }
 
-/* Header bar */
 .drum-picker-header {
   display: flex; align-items: center; gap: 0.6rem;
   padding: 0.85rem 1.4rem;
@@ -742,7 +686,6 @@
   text-transform: uppercase; letter-spacing: 0.12em;
 }
 
-/* Labels row */
 .drum-labels-row {
   display: flex;
   align-items: center;
@@ -759,7 +702,6 @@
 .drum-col-spacer { width: 2.5rem; flex-shrink: 0; }
 .drum-col-spacer-sm { width: 1.5rem; flex-shrink: 0; }
 
-/* Scrollers row */
 .drum-scrollers-row {
   position: relative;
   display: flex;
@@ -782,7 +724,6 @@
   );
 }
 
-/* Shared center highlight band — light blue tint */
 .drum-scrollers-row::before {
   content: '';
   position: absolute;
@@ -797,7 +738,6 @@
   z-index: 2;
 }
 
-/* Drum column */
 .drum-column { flex: 1; }
 
 .drum-wrapper {
@@ -843,7 +783,6 @@
   text-shadow: none;
 }
 
-/* Colon */
 .drum-colon {
   width: 1.5rem;
   flex-shrink: 0;
@@ -860,7 +799,6 @@
   flex-shrink: 0;
 }
 
-/* Footer */
 .drum-picker-footer {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0.85rem 1.4rem 1rem;
@@ -883,7 +821,6 @@
   color: var(--slate-500); letter-spacing: 0.05em;
 }
 
-/* Confirm button — clean vibrant gradient */
 .drum-confirm-btn {
   display: flex; align-items: center; gap: 0.45rem;
   padding: 0.72rem 1.35rem;
@@ -912,10 +849,6 @@
 }
 .drum-confirm-btn:active { transform: translateY(0); }
 
-
-/* ════════════════════════════════════════════════════════════
-   CONFIRMED SLOT PILL
-════════════════════════════════════════════════════════════ */
 .slot-confirmed-pill {
   display: flex; align-items: center; gap: 0.65rem;
   padding: 0.8rem 1.1rem;
@@ -943,9 +876,6 @@
 .slot-clear-btn:hover { color: var(--error); background: rgba(239,68,68,0.08); }
 .slot-clear-btn svg { width: 15px; height: 15px; }
 
-/* ════════════════════════════════════════════════════════════
-   SUBMIT BUTTON
-════════════════════════════════════════════════════════════ */
 .submit-btn {
   position: relative; overflow: hidden;
   margin-top: 1rem; width: 100%;
@@ -960,7 +890,6 @@
   transition: all 0.25s var(--ease-smooth);
   letter-spacing: 0.01em;
 }
-/* Top gloss */
 .submit-btn::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0;
@@ -995,9 +924,6 @@
 .spinner-icon { width: 20px; height: 20px; animation: spin 0.75s linear infinite; stroke-linecap: round; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ════════════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE OPTIMIZATIONS
-════════════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
   .registration-page-bg {
     padding: 1.5rem 0.75rem 3rem;
@@ -1017,7 +943,6 @@
     gap: 1.1rem;
   }
 
-  /* Time Picker mobile adjustment */
   .inline-time-picker {
     border-radius: 16px;
   }
@@ -1073,7 +998,6 @@
     font-size: 0.8rem;
   }
 
-  /* Slot inputs */
   .slot-section-wrapper {
     padding: 1.1rem 0.85rem;
   }

@@ -1,19 +1,18 @@
+/**
+ * bookingController.js — Booking API Controller
+ * Manages database insertion into Supabase, duplicate validation checks, JWT session signing, and booking retrieval.
+ */
+
 const supabase = require('../config/supabaseClient');
 const { signBookingToken } = require('../middleware/authMiddleware');
 
 const TABLE_NAME = process.env.SUPABASE_TABLE_NAME || 'demo_bookings';
 
-/**
- * Generate a unique registration ID (e.g., ASP-784291)
- */
 function generateRegistrationId() {
   const randomNum = Math.floor(100000 + Math.random() * 900000);
   return `ASP-${randomNum}`;
 }
 
-/**
- * Controller: Register a new demo booking in Supabase
- */
 async function createBooking(req, res) {
   try {
     const { fullName, mobile, email, fieldOfStudy, yearOfStudy, demoSlot } = req.body;
@@ -28,7 +27,6 @@ async function createBooking(req, res) {
     let createdRecord = null;
 
     if (isSupabaseConfigured) {
-      // 1. Duplicate check by email or mobile in Supabase target table
       const { data: existingBookings, error: checkError } = await supabase
         .from(TABLE_NAME)
         .select('*')
@@ -63,7 +61,6 @@ async function createBooking(req, res) {
         }
       }
 
-      // 2. Insert into `demo_bookings` table (supports both snake_case and camelCase schema)
       const snakeCasePayload = {
         registration_id: registrationId,
         full_name: fullName,
@@ -84,16 +81,13 @@ async function createBooking(req, res) {
         demoSlot: demoSlot,
       };
 
-      // Try snake_case insertion first (standard PostgreSQL)
       let { data, error: insertError } = await supabase
         .from(TABLE_NAME)
         .insert([snakeCasePayload])
         .select()
         .single();
 
-      // If column error occurs, fallback to camelCase insertion
       if (insertError && (insertError.message.includes('column') || insertError.code === 'PGRST204')) {
-        console.log(`[Supabase Retry] Trying camelCase column names for ${TABLE_NAME} table...`);
         const retryResult = await supabase
           .from(TABLE_NAME)
           .insert([camelCasePayload])
@@ -123,7 +117,6 @@ async function createBooking(req, res) {
       registrationId = data.registration_id || data.registrationId || registrationId;
     }
 
-    // 3. Prepare payload for JWT token
     const tokenPayload = {
       registrationId,
       fullName,
@@ -135,7 +128,6 @@ async function createBooking(req, res) {
       createdAt: createdRecord ? (createdRecord.created_at || createdRecord.createdAt) : new Date().toISOString(),
     };
 
-    // 4. Sign JWT token
     const token = signBookingToken(tokenPayload);
 
     return res.status(201).json({
@@ -154,9 +146,6 @@ async function createBooking(req, res) {
   }
 }
 
-/**
- * Controller: Verify session JWT token and return booking details
- */
 async function verifySession(req, res) {
   try {
     return res.status(200).json({
@@ -173,9 +162,6 @@ async function verifySession(req, res) {
   }
 }
 
-/**
- * Controller: Get all demo bookings from Supabase
- */
 async function getAllBookings(req, res) {
   try {
     const { data, error } = await supabase
@@ -203,5 +189,3 @@ module.exports = {
   getAllBookings,
   getBookings: getAllBookings,
 };
-
-

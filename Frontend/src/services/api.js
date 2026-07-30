@@ -1,8 +1,10 @@
+/**
+ * api.js — Frontend API Service
+ * Handles HTTP network communication between the React frontend and the Express backend server.
+ */
+
 const API_BASE_URL = 'http://localhost:5000/api/bookings';
 
-/**
- * Register a new demo slot booking
- */
 export async function registerDemoBooking(formData) {
   try {
     const response = await fetch(`${API_BASE_URL}/register`, {
@@ -25,7 +27,6 @@ export async function registerDemoBooking(formData) {
 
     return data;
   } catch (error) {
-    // If backend is offline or network error, throw formatted error
     if (!error.status) {
       error.message = error.message || 'Unable to connect to backend server. Please make sure backend is running.';
     }
@@ -33,9 +34,6 @@ export async function registerDemoBooking(formData) {
   }
 }
 
-/**
- * Verify session token with backend JWT verification
- */
 export async function verifyBookingSession(token) {
   try {
     const response = await fetch(`${API_BASE_URL}/verify`, {
@@ -49,7 +47,6 @@ export async function verifyBookingSession(token) {
     const data = await response.json();
     return data.success ? data.booking : null;
   } catch (error) {
-    console.error('[API Session Verify Error]:', error);
     return null;
   }
 }

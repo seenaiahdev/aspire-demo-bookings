@@ -1,6 +1,10 @@
+/**
+ * validationMiddleware.js — Input Validation Middleware
+ * Uses express-validator to sanitize and enforce validation rules on booking payloads.
+ */
+
 const { body, validationResult } = require('express-validator');
 
-// Validation rules for demo booking registration
 const bookingValidationRules = [
   body('fullName')
     .trim()
@@ -39,7 +43,6 @@ const bookingValidationRules = [
     .withMessage('Demo Booking Slot is required'),
 ];
 
-// Validation result handler
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
@@ -52,8 +55,6 @@ const validate = (req, res, next) => {
       extractedErrors[err.path] = err.msg;
     }
   });
-
-  console.log('[Backend Validation Failed]:', extractedErrors, 'Payload:', req.body);
 
   return res.status(400).json({
     success: false,

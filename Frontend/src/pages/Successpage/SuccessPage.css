@@ -1,6 +1,7 @@
+/* SuccessPage.css — Stylesheet for AspireNext demo booking confirmation page, pass ticket card, and celebration confetti. */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-/* ── Confetti canvas — fixed, full screen, on top of bg, below card ── */
 .confetti-canvas {
   position: fixed;
   inset: 0;
@@ -10,7 +11,6 @@
   z-index: 10;
 }
 
-/* ── Page background ── */
 .success-page-bg {
   min-height: 100vh;
   width: 100%;
@@ -29,7 +29,6 @@
   overflow: hidden;
 }
 
-/* Ambient orbs */
 .ambient-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
 .orb-1 {
   width: 500px; height: 500px;
@@ -48,7 +47,6 @@
 @keyframes orb1drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(40px,50px) scale(1.1); } }
 @keyframes orb2drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-50px,-40px) scale(1.12); } }
 
-/* ── Card ── */
 .success-card-wrapper {
   position: relative;
   z-index: 20;
@@ -77,7 +75,6 @@
   to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
-/* Brand header */
 .success-brand-header {
   display: flex; flex-direction: column; align-items: center;
   margin-bottom: 1.4rem;
@@ -87,7 +84,6 @@
   letter-spacing: 0.18em; text-transform: uppercase; margin-top: 0.4rem;
 }
 
-/* Checkmark badge */
 .success-badge-ring {
   width: 80px; height: 80px;
   border-radius: 50%;
@@ -109,7 +105,6 @@
 }
 @keyframes drawCheck { to { stroke-dashoffset: 0; } }
 
-/* Header text */
 .success-header-text {
   display: flex; flex-direction: column; align-items: center; margin-bottom: 1.85rem;
 }
@@ -137,7 +132,6 @@
   font-weight: 700;
 }
 
-/* ── Ticket Card ── */
 .ticket-card-modern {
   width: 100%;
   background: linear-gradient(135deg, #F8FAFC 0%, #F1F5FF 100%);
@@ -191,7 +185,6 @@
 .info-label { font-size: 0.72rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.06em; }
 .info-val { font-size: 0.9rem; font-weight: 600; color: #0F172A; word-break: break-word; }
 
-/* ── Action buttons ── */
 .action-buttons-stack { width: 100%; }
 
 .whatsapp-action-btn {
@@ -226,9 +219,6 @@
 .whatsapp-svg { width: 22px; height: 22px; position: relative; z-index: 1; }
 .whatsapp-action-btn span { position: relative; z-index: 1; }
 
-/* ════════════════════════════════════════════════════════════
-   RESPONSIVE — MOBILE OPTIMIZATIONS
-════════════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
   .success-page-bg {
     padding: 1.5rem 0.75rem 3rem;

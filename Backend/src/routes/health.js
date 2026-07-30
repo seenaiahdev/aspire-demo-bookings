@@ -1,3 +1,8 @@
+/**
+ * health.js — Health & System Diagnostics Router
+ * Provides system status checks and internal booking collection routes.
+ */
+
 const express = require('express');
 const { getBookings } = require('../controllers/bookingController');
 

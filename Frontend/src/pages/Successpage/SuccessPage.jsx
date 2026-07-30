@@ -1,8 +1,12 @@
+/**
+ * SuccessPage.jsx — Registration Confirmation Page
+ * Renders the confirmed ticket pass, celebration confetti animation, and WhatsApp community link.
+ */
+
 import React, { useEffect, useRef } from 'react';
 import CompanyLogo from '../Registrationpage/CompanyLogo';
 import './SuccessPage.css';
 
-/* ── Confetti particle config ── */
 const CONFETTI_COUNT = 120;
 const COLORS = ['#2563EB','#06B6D4','#10B981','#F59E0B','#8B5CF6','#EF4444','#EC4899','#FFFFFF'];
 const SHAPES = ['square', 'rect', 'circle', 'ribbon'];
@@ -20,7 +24,6 @@ function Confetti() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Spawn particles
     particles.current = Array.from({ length: CONFETTI_COUNT }, () => ({
       x:      randomBetween(0, canvas.width),
       y:      randomBetween(-canvas.height * 0.5, -10),
@@ -45,14 +48,13 @@ function Confetti() {
       frame++;
 
       particles.current.forEach(p => {
-        // Physics
         p.swingT += p.swing;
         p.vx     += Math.sin(p.swingT) * 0.3;
         p.vy     += p.gravity;
         p.x      += p.vx;
         p.y      += p.vy;
         p.rot    += p.rotV;
-        // Fade out after bottom 80%
+
         if (p.y > canvas.height * 0.75) {
           p.alpha = Math.max(0, p.alpha - 0.015);
         }
@@ -80,12 +82,10 @@ function Confetti() {
         ctx.restore();
       });
 
-      // Stop once all faded
       const alive = particles.current.some(p => p.alpha > 0 && p.y < canvas.height + 50);
       if (alive) animRef.current = requestAnimationFrame(draw);
     };
 
-    // Small delay so card animation plays first
     const t = setTimeout(() => { animRef.current = requestAnimationFrame(draw); }, 300);
 
     const onResize = () => {
@@ -104,7 +104,6 @@ function Confetti() {
   return <canvas ref={canvasRef} className="confetti-canvas" />;
 }
 
-/* ── Main ── */
 export default function SuccessPage({ registrationData }) {
   const {
     fullName    = 'Participant',
@@ -116,28 +115,23 @@ export default function SuccessPage({ registrationData }) {
     registrationId = 'ASP-DEMO-001'
   } = registrationData || {};
 
-  // Scroll to top immediately on mount to show checkmark, title, and confetti
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="success-page-bg">
-      {/* Confetti blast */}
       <Confetti />
 
-      {/* Ambient orbs */}
       <div className="ambient-orb orb-1" />
       <div className="ambient-orb orb-2" />
 
       <div className="success-card-wrapper">
-        {/* Brand */}
         <div className="success-brand-header">
           <CompanyLogo width={72} height={72} />
           <div className="company-brand-title">AspireNext Edu Tech</div>
         </div>
 
-        {/* Animated checkmark */}
         <div className="success-badge-ring">
           <svg className="success-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
             <polyline points="20 6 9 17 4 12" />
@@ -151,7 +145,6 @@ export default function SuccessPage({ registrationData }) {
           </p>
         </div>
 
-        {/* Ticket */}
         <div className="ticket-card-modern">
           <div className="ticket-top">
             <div className="ticket-pass-brand">
@@ -195,7 +188,6 @@ export default function SuccessPage({ registrationData }) {
           </div>
         </div>
 
-        {/* WhatsApp only — rebook removed */}
         <div className="action-buttons-stack">
           <a
             href="https://chat.whatsapp.com/"

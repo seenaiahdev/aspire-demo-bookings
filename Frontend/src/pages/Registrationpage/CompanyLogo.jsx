@@ -1,3 +1,8 @@
+/**
+ * CompanyLogo.jsx — AspireNext Edu Tech Brand Logo Component
+ * Vector SVG brand mark with animated graduate figures, scroll, and academic stars.
+ */
+
 import React from 'react';
 
 export default function CompanyLogo({ width = 48, height = 48, className = "" }) {
@@ -29,31 +34,22 @@ export default function CompanyLogo({ width = 48, height = 48, className = "" })
         }
       `}</style>
 
-      {/* Top Blue Star */}
       <polygon className="star-center" points="100,18 104,30 117,30 107,38 111,50 100,42 89,50 93,38 83,30 96,30" fill="#2563EB" />
-      
-      {/* Left Silver Star */}
       <polygon className="star-left" points="48,52 51,61 60,61 52,67 55,76 48,70 41,76 44,67 36,61 45,61" fill="#9CA3AF" />
-      
-      {/* Right Silver Star */}
       <polygon className="star-right" points="152,52 155,61 164,61 156,67 159,76 152,70 145,76 148,67 140,61 149,61" fill="#9CA3AF" />
       
-      {/* Left Figure (Royal Blue) */}
       <circle cx="76" cy="78" r="16" fill="#3B5998" />
       <path d="M76,96 C64,96 36,88 28,85 L32,93 C44,101 68,110 70,126 L55,188 L74,188 L92,136 C94,122 92,106 86,96 Z" fill="#3B5998" />
       
-      {/* Scroll / Diploma in Left Hand */}
       <g transform="translate(12, 66) rotate(-22)">
         <rect x="0" y="0" width="13" height="38" rx="3" fill="#F8FAFC" stroke="#94A3B8" strokeWidth="1.5" />
         <rect className="scroll-ribbon" x="0" y="15" width="13" height="8" fill="#DC2626" />
       </g>
 
-      {/* Right Figure (Navy Blue) */}
       <circle cx="126" cy="72" r="16" fill="#1E2A78" />
       <path d="M126,90 C138,94 164,80 174,70 L168,78 C148,96 136,115 134,130 L140,188 L122,188 L114,120 C111,105 116,94 126,90 Z" fill="#1E2A78" />
       <path d="M126,90 C120,68 128,48 132,40 L140,44 C135,56 130,73 128,90 Z" fill="#1E2A78" />
 
-      {/* Graduation Cap / Mortarboard */}
       <g transform="translate(110, 20)">
         <polygon points="26,4 50,14 26,24 2,14" fill="#1F2937" />
         <polygon points="26,6 46,14 26,22 6,14" fill="#374151" />

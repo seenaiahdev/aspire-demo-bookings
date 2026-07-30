@@ -1,3 +1,8 @@
+/**
+ * server.js — Express Backend Server Entrypoint
+ * Initializes middleware, CORS, JSON parsing, and mounts API route handlers.
+ */
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -8,16 +13,14 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend client
 app.use(cors({
-  origin: '*', // Allows requests from React frontend
+  origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(express.json());
 
-// Routes
 app.use('/api', healthRoutes);
 app.use('/api/bookings', bookingRoutes);
 
@@ -34,7 +37,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error('[Unhandled Server Error]:', err);
   res.status(500).json({

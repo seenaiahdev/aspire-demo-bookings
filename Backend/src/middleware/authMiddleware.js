@@ -1,18 +1,17 @@
+/**
+ * authMiddleware.js — Authentication Middleware
+ * Handles JWT token signing for confirmed demo bookings and token verification for protected endpoints.
+ */
+
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'aspire_next_edu_tech_super_secret_jwt_key_2026';
 const JWT_EXPIRES_IN = '24h';
 
-/**
- * Sign a new JWT token containing user booking session data
- */
 function signBookingToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-/**
- * Verify JWT token from Authorization header or body
- */
 function verifyBookingToken(req, res, next) {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.startsWith('Bearer ')
