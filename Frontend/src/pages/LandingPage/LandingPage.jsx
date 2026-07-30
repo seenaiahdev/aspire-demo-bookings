@@ -347,6 +347,13 @@ const LandingPage = () => {
                 <li><a href="#companies">Hiring Companies</a></li>
               </ul>
             </div>
+
+            <div className="footer-contact-col">
+              <h4>Contact Us</h4>
+              <p>📧 info@aspirenext.in</p>
+              <p>📞 +91 98765 43210</p>
+              <p>📍 Hyderabad, Telangana</p>
+            </div>
           </div>
 
           <div className="footer-bottom">

@@ -815,8 +815,8 @@
 .footer-top {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 40px;
+  justify-content: flex-start;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
@@ -824,6 +824,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 2;
+  min-width: 260px;
+  max-width: 420px;
 }
 
 .footer-brand .logo-text h2 {
@@ -834,7 +837,29 @@
   font-size: 0.95rem;
   color: #94a3b8;
   line-height: 1.7;
-  max-width: 440px;
+}
+
+.footer-links-group,
+.footer-contact-col {
+  flex: 1;
+  min-width: 160px;
+}
+
+.footer-contact-col h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.footer-contact-col p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.7;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .footer-links-group h4 {
