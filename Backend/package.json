@@ -1,0 +1,14 @@
+{
+  "name": "aspire-demo-bookings-backend",
+  "version": "1.0.0",
+  "description": "Sample Express backend for Aspire Demo Bookings",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.3",
+    "express": "^4.21.2"
+  }
+}
