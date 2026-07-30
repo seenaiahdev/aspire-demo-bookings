@@ -212,6 +212,8 @@ export default function RegistrationPage({ onSuccess }) {
   const [touched, setTouched]   = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [duplicateError, setDuplicateError] = useState('');
+  const [isShaking, setIsShaking]           = useState(false);
+  const cardRef                             = useRef(null);
 
   const [showCalendar, setShowCalendar]     = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -223,6 +225,17 @@ export default function RegistrationPage({ onSuccess }) {
   const [selectedMinute, setSelectedMinute] = useState('00');
   const [selectedPeriod, setSelectedPeriod] = useState('AM');
   const [timeConfirmed, setTimeConfirmed]   = useState(false);
+
+  // Trigger tactile shake animation + scroll into view on error
+  const triggerErrorEffect = () => {
+    setIsShaking(true);
+    if (cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setTimeout(() => setIsShaking(false), 500);
+  };
 
   /* Calendar grid */
   const calendarDays = useMemo(() => {
@@ -253,8 +266,7 @@ export default function RegistrationPage({ onSuccess }) {
     return '';
   };
 
-
-  const isFieldValid = (name) => formData[name] && !validateField(name, formData[name]);
+  const isFieldValid = (name) => Boolean(formData[name]) && !errors[name] && !validateField(name, formData[name]);
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
@@ -262,11 +274,14 @@ export default function RegistrationPage({ onSuccess }) {
     setErrors(p => ({ ...p, [name]: validateField(name, value) }));
   };
 
+  // Real-time inline validation as user types
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(p => ({ ...p, [name]: value }));
     setDuplicateError('');
-    if (touched[name]) setErrors(p => ({ ...p, [name]: validateField(name, value) }));
+    setTouched(p => ({ ...p, [name]: true }));
+    const fieldErr = validateField(name, value);
+    setErrors(p => ({ ...p, [name]: fieldErr }));
   };
 
   const handleDayClick = (day) => {
@@ -305,7 +320,11 @@ export default function RegistrationPage({ onSuccess }) {
     });
     setTouched(allTouched);
     setErrors(newErrors);
-    if (hasErrors) return;
+
+    if (hasErrors) {
+      triggerErrorEffect();
+      return;
+    }
 
     setDuplicateError('');
     setIsSubmitting(true);
@@ -322,10 +341,23 @@ export default function RegistrationPage({ onSuccess }) {
       if (onSuccess) onSuccess(result.data || formData);
     } catch (err) {
       setIsSubmitting(false);
+      triggerErrorEffect();
       if (err.status === 409) {
-        setDuplicateError(err.message || 'Duplicate submission detected in database.');
+        const msg = err.message || 'Duplicate submission detected in database.';
+        setDuplicateError(msg);
+        const lowerMsg = msg.toLowerCase();
+        const dupFields = {};
+        if (lowerMsg.includes('email')) {
+          dupFields.email = 'This email address is already registered.';
+        }
+        if (lowerMsg.includes('mobile') || lowerMsg.includes('phone') || lowerMsg.includes('number')) {
+          dupFields.mobile = 'This mobile number is already registered.';
+        }
+        setErrors(prev => ({ ...prev, ...dupFields }));
+        setTouched(prev => ({ ...prev, email: true, mobile: true }));
       } else if (err.errors) {
         setErrors(prev => ({ ...prev, ...err.errors }));
+        setTouched(prev => ({ ...prev, ...Object.keys(err.errors).reduce((acc, k) => ({ ...acc, [k]: true }), {}) }));
       } else {
         setDuplicateError(err.message || 'Server error. Please try again.');
       }
@@ -359,7 +391,7 @@ export default function RegistrationPage({ onSuccess }) {
       <div className="ambient-orb orb-1" />
       <div className="ambient-orb orb-2" />
 
-      <div className="registration-card-wrapper">
+      <div ref={cardRef} className={`registration-card-wrapper ${isShaking ? 'is-shaking' : ''}`}>
         {/* Brand Header */}
         <div className="form-brand-header">
           <div className="company-logo-container">
