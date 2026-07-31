@@ -25,7 +25,7 @@ const MINUTES_LIST = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, 
 const ITEM_HEIGHT  = 44;
 
 /* ── Searchable Dropdown ── */
-function SearchableSelect({ id, name, value, onChange, onBlur, options, placeholder, icon, disabled }) {
+function SearchableSelect({ id, name, value, onChange, onBlur, options, placeholder, icon, disabled, openUp }) {
   const [open, setOpen]   = useState(false);
   const [query, setQuery] = useState('');
   const wrapRef  = useRef(null);
@@ -69,7 +69,7 @@ function SearchableSelect({ id, name, value, onChange, onBlur, options, placehol
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </div>
-      <div className={`ss-dropdown ${open ? 'ss-dropdown-open' : ''}`}>
+      <div className={`ss-dropdown ${open ? 'ss-dropdown-open' : ''} ${openUp ? 'ss-dropdown-up' : ''}`}>
         <div className="ss-search-bar">
           <svg className="ss-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -175,7 +175,28 @@ function SlotPopup({ onClose, onConfirm }) {
 
   const [selectedDateObj, setSelectedDateObj] = useState(dateOptions[0].dateObj);
   const [selectedHour, setSelectedHour] = useState('10');
-  const [selectedMinute, setSelectedMinute] = useState('00');
+
+  const availableHours = useMemo(() => {
+    const isToday = selectedDateObj.getDate() === new Date().getDate() && selectedDateObj.getMonth() === new Date().getMonth();
+    const currentHour = new Date().getHours();
+    
+    const all = [
+      { val: '09', hr24: 9 }, { val: '10', hr24: 10 }, { val: '11', hr24: 11 },
+      { val: '12', hr24: 12 }, { val: '01', hr24: 13 }, { val: '02', hr24: 14 },
+      { val: '03', hr24: 15 }, { val: '04', hr24: 16 }
+    ];
+
+    if (isToday && currentHour >= 8) { // if it's 8:30 AM, 9 AM is available
+      return all.filter(h => h.hr24 > currentHour).map(h => h.val);
+    }
+    return all.map(h => h.val);
+  }, [selectedDateObj]);
+
+  useEffect(() => {
+    if (availableHours.length > 0 && !availableHours.includes(selectedHour)) {
+      setSelectedHour(availableHours[0]);
+    }
+  }, [availableHours, selectedHour]);
 
   // Auto-calculate AM/PM based on restricted hours
   const isAM = ['09', '10', '11'].includes(selectedHour);
@@ -183,7 +204,7 @@ function SlotPopup({ onClose, onConfirm }) {
 
   const handleConfirm = () => {
     const dateStr = selectedDateObj.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-    const slot = `${dateStr} @ ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
+    const slot = `${dateStr} @ ${selectedHour}:00 ${selectedPeriod}`;
     onConfirm(slot);
   };
 
@@ -223,18 +244,12 @@ function SlotPopup({ onClose, onConfirm }) {
             })}
           </div>
 
-          <div className="drum-labels-row">
+          <div className="drum-labels-row" style={{ gridTemplateColumns: '1fr 1fr' }}>
             <span className="drum-col-label">Hour</span>
-            <span className="drum-col-spacer-sm"/>
-            <span className="drum-col-label">Min</span>
-            <span className="drum-col-spacer-sm"/>
             <span className="drum-col-label">AM/PM</span>
           </div>
-          <div className="drum-scrollers-row">
-            <ScrollDrum items={DEMO_HOURS} selected={selectedHour} onSelect={setSelectedHour}/>
-            <div className="drum-colon">:</div>
-            <ScrollDrum items={MINUTES_LIST} selected={selectedMinute} onSelect={setSelectedMinute}/>
-            <div className="drum-colon-space"/>
+          <div className="drum-scrollers-row" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            <ScrollDrum items={availableHours} selected={selectedHour} onSelect={setSelectedHour}/>
             
             {/* Read-only period block for visual balance */}
             <div className="drum-column drum-readonly" style={{ cursor: 'default' }}>
@@ -250,7 +265,7 @@ function SlotPopup({ onClose, onConfirm }) {
 
           <div className="drum-picker-footer" style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--slate-100)' }}>
             <div className="drum-time-preview">
-              <span className="preview-time">{selectedHour}:{selectedMinute}</span>
+              <span className="preview-time">{selectedHour}:00</span>
               <span className="preview-period">{selectedPeriod}</span>
             </div>
             <button type="button" className="drum-confirm-btn" onClick={handleConfirm}>
@@ -276,13 +291,20 @@ export default function RegistrationPage({ onSuccess }) {
   const [duplicateError, setDuplicateError] = useState('');
   const [isShaking, setIsShaking]           = useState(false);
   const [showSlotPopup, setShowSlotPopup]   = useState(false);
+  const [termsAccepted, setTermsAccepted]   = useState(false);
+  const [termsError, setTermsError]         = useState(false);
 
   const triggerShake = () => { setIsShaking(true); setTimeout(() => setIsShaking(false), 500); };
 
   const validateField = (name, value) => {
     if (!value || value.trim() === '') return 'Required';
     if (name === 'email'  && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Invalid email';
-    if (name === 'mobile' && !/^[0-9]{10}$/.test(value.trim()))                 return '10 digits only';
+    if (name === 'mobile') {
+      const val = value.trim();
+      if (!/^\d+$/.test(val)) return 'Numbers only';
+      if (val.length !== 10) return 'Must be 10 digits';
+      if (val.startsWith('0')) return 'Cannot start with 0';
+    }
     return '';
   };
 
@@ -300,14 +322,36 @@ export default function RegistrationPage({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = {}; let hasErrors = false; const allTouched = {};
-    Object.keys(formData).forEach(k => {
-      allTouched[k] = true;
+    const newErrors = {}; 
+    let hasErrors = false; 
+    let firstErrorField = null;
+
+    // Define correct sequential order of fields
+    const fieldOrder = ['fullName', 'mobile', 'email', 'fieldOfStudy', 'yearOfStudy', 'demoSlot'];
+    
+    fieldOrder.forEach(k => {
       const err = validateField(k, formData[k]);
-      if (err) { newErrors[k] = err; hasErrors = true; }
+      if (err) { 
+        newErrors[k] = err; 
+        hasErrors = true; 
+        if (!firstErrorField) firstErrorField = k;
+      }
     });
-    setTouched(allTouched); setErrors(newErrors);
-    if (hasErrors) { triggerShake(); return; }
+
+    if (!termsAccepted) { 
+      hasErrors = true; 
+      if (!firstErrorField) setTermsError(true);
+    }
+    
+    setErrors(newErrors);
+    
+    if (hasErrors) { 
+      triggerShake(); 
+      if (firstErrorField) {
+        setTouched(prev => ({ ...prev, [firstErrorField]: true }));
+      }
+      return; 
+    }
     setDuplicateError(''); setIsSubmitting(true);
     try {
       const result = await registerDemoBooking(formData);
@@ -424,7 +468,7 @@ export default function RegistrationPage({ onSuccess }) {
               <div className={`fg ${errors.fieldOfStudy&&touched.fieldOfStudy?'has-error':''} ${isFieldValid('fieldOfStudy')?'is-valid':''}`}>
                 <label htmlFor="fieldOfStudy" className="form-label">Stream <span className="req">*</span></label>
                 <SearchableSelect id="fieldOfStudy" name="fieldOfStudy" value={formData.fieldOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser}/>
+                  onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser} openUp/>
                 <FieldErr name="fieldOfStudy"/>
               </div>
             </div>
@@ -434,7 +478,7 @@ export default function RegistrationPage({ onSuccess }) {
               <div className={`fg ${errors.yearOfStudy&&touched.yearOfStudy?'has-error':''} ${isFieldValid('yearOfStudy')?'is-valid':''}`}>
                 <label htmlFor="yearOfStudy" className="form-label">Year of Study <span className="req">*</span></label>
                 <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={YEAR_OPTIONS} placeholder="Select year..." icon={iconCal}/>
+                  onChange={handleChange} onBlur={handleBlur} options={YEAR_OPTIONS} placeholder="Select year..." icon={iconCal} openUp/>
                 <FieldErr name="yearOfStudy"/>
               </div>
 
@@ -476,6 +520,24 @@ export default function RegistrationPage({ onSuccess }) {
                   </div>
               }
             </button>
+
+            {/* Terms and Conditions */}
+            <div className={`rp-terms ${termsError ? 'has-error' : ''}`} style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+              <input 
+                type="checkbox" 
+                id="terms" 
+                className="rp-terms-checkbox"
+                checked={termsAccepted}
+                onChange={(e) => {
+                  setTermsAccepted(e.target.checked);
+                  if (e.target.checked) setTermsError(false);
+                }}
+                style={{ marginTop: '0.2rem', cursor: 'pointer' }}
+              />
+              <label htmlFor="terms" className="rp-terms-label" style={{ fontSize: '0.82rem', color: termsError ? 'var(--error)' : 'var(--slate-500)', lineHeight: '1.4', cursor: 'pointer', flex: 1 }}>
+                I agree to the Terms & Conditions and understand that my data will be used to schedule and manage the demo session.
+              </label>
+            </div>
           </form>
         </div>
       </div>
