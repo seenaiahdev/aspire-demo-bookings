@@ -303,7 +303,7 @@ export default function RegistrationPage({ onSuccess }) {
       const val = value.trim();
       if (!/^\d+$/.test(val)) return 'Numbers only';
       if (val.length !== 10) return 'Must be 10 digits';
-      if (val.startsWith('0')) return 'Cannot start with 0';
+      if (!/^[6-9]/.test(val)) return 'Must start with 6, 7, 8, or 9';
     }
     return '';
   };
