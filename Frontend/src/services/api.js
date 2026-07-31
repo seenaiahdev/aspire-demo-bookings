@@ -3,7 +3,9 @@
  * Handles HTTP network communication between the React frontend and the Express backend server.
  */
 
-const API_BASE_URL = 'http://localhost:5000/api/bookings';
+const API_BASE_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api/bookings`
+  : 'http://localhost:5000/api/bookings';
 
 export async function registerDemoBooking(formData) {
   try {
