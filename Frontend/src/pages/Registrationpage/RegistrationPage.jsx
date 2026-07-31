@@ -361,11 +361,18 @@ export default function RegistrationPage({ onSuccess }) {
     } catch (err) {
       setIsSubmitting(false); triggerShake();
       if (err.status === 409) {
-        const msg = err.message || 'Duplicate submission.'; setDuplicateError(msg);
-        const low = msg.toLowerCase(); const dup = {};
+        const msg = err.message || 'Duplicate submission.';
+        const low = msg.toLowerCase(); 
+        const dup = {};
         if (low.includes('email'))  dup.email  = 'Email already registered.';
         if (low.includes('mobile') || low.includes('phone')) dup.mobile = 'Mobile already registered.';
-        setErrors(p => ({...p,...dup})); setTouched(p => ({...p,email:true,mobile:true}));
+        
+        if (Object.keys(dup).length > 0) {
+          setErrors(p => ({...p,...dup})); 
+          setTouched(p => ({...p,email:true,mobile:true}));
+        } else {
+          setDuplicateError(msg);
+        }
       } else if (err.errors) {
         setErrors(p=>({...p,...err.errors}));
         setTouched(p=>({...p,...Object.keys(err.errors).reduce((a,k)=>({...a,[k]:true}),{})}));
