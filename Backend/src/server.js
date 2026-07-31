@@ -46,6 +46,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Aspire Demo Bookings backend running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Aspire Demo Bookings backend running on http://localhost:${PORT}`);
+  });
+}
+
+// Export the Express app for Vercel Serverless deployment
+module.exports = app;
