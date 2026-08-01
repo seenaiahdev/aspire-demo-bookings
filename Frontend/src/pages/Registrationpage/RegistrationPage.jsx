@@ -5,6 +5,7 @@
 
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import logoImg from '../../assets/Logo_f8hqc0.jpg';
+import heroImg from '../../assets/hero_illustration.jpg';
 import { registerDemoBooking } from '../../services/api';
 import './RegistrationPage.css';
 
@@ -403,13 +404,11 @@ export default function RegistrationPage({ onSuccess }) {
       {/* ── Centered Card ── */}
       <div className={`rp-card ${isShaking ? 'is-shaking' : ''}`}>
 
-        {/* LEFT: Logo + Title */}
-        <div className="rp-left">
-          <div className="rp-left-inner">
-            <div className="rp-logo-ring">
-              <img src={logoImg} alt="AspireNext Logo" className="rp-logo-img" />
-            </div>
-            <h2 className="rp-left-title">Book Your Free<br/>Demo Today</h2>
+        {/* LEFT: Hero Illustration & Logo */}
+        <div className="rp-left has-illustration">
+          <img src={heroImg} alt="EdTech Startup" className="rp-hero-bg" />
+          <div className="rp-logo-overlay">
+            <img src={logoImg} alt="AspireNext Logo" className="rp-logo-img" />
           </div>
         </div>
 
