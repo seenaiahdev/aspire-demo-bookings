@@ -5,6 +5,7 @@
 
 const supabase = require('../config/supabaseClient');
 const { signBookingToken } = require('../middleware/authMiddleware');
+const { syncBookingToGoogleSheet } = require('../services/googleSheetsService');
 
 const TABLE_NAME = process.env.SUPABASE_TABLE_NAME || 'demo_bookings';
 
@@ -13,9 +14,16 @@ function generateRegistrationId() {
   return `ASP-${randomNum}`;
 }
 
+function generateUserPassword(fullName, mobile) {
+  const firstName = (fullName || 'user').trim().split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+  const last4 = (mobile || '0000').trim().slice(-4);
+  return `${firstName}@${last4}`;
+}
+
 async function createBooking(req, res) {
   try {
     const { fullName, mobile, email, fieldOfStudy, yearOfStudy, demoSlot } = req.body;
+    const generatedPassword = generateUserPassword(fullName, mobile);
 
     const isSupabaseConfigured =
       process.env.SUPABASE_URL &&
@@ -69,6 +77,7 @@ async function createBooking(req, res) {
         field_of_study: fieldOfStudy,
         year_of_study: yearOfStudy,
         demo_slot: demoSlot,
+        generated_password: generatedPassword,
       };
 
       const camelCasePayload = {
@@ -79,6 +88,7 @@ async function createBooking(req, res) {
         fieldOfStudy: fieldOfStudy,
         yearOfStudy: yearOfStudy,
         demoSlot: demoSlot,
+        generatedPassword: generatedPassword,
       };
 
       let { data, error: insertError } = await supabase
@@ -96,6 +106,27 @@ async function createBooking(req, res) {
 
         data = retryResult.data;
         insertError = retryResult.error;
+      }
+
+      // If database table doesn't have generated_password column yet, fallback to base payload
+      if (insertError && insertError.message.includes('column')) {
+        const baseSnakePayload = {
+          registration_id: registrationId,
+          full_name: fullName,
+          mobile: mobile,
+          email: email,
+          field_of_study: fieldOfStudy,
+          year_of_study: yearOfStudy,
+          demo_slot: demoSlot,
+        };
+        const fallbackResult = await supabase
+          .from(TABLE_NAME)
+          .insert([baseSnakePayload])
+          .select()
+          .single();
+
+        data = fallbackResult.data;
+        insertError = fallbackResult.error;
       }
 
       if (insertError) {
@@ -125,14 +156,19 @@ async function createBooking(req, res) {
       fieldOfStudy,
       yearOfStudy,
       demoSlot,
+      password: generatedPassword,
+      generatedPassword,
       createdAt: createdRecord ? (createdRecord.created_at || createdRecord.createdAt) : new Date().toISOString(),
     };
 
     const token = signBookingToken(tokenPayload);
 
+    // Asynchronously push to Google Sheets backup
+    syncBookingToGoogleSheet(tokenPayload);
+
     return res.status(201).json({
       success: true,
-      message: 'Demo booking registered successfully in Supabase!',
+      message: 'Demo booking registered successfully in Supabase and queued for Google Sheets sync!',
       token,
       data: tokenPayload,
     });
