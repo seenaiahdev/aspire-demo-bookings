@@ -163,8 +163,8 @@ async function createBooking(req, res) {
 
     const token = signBookingToken(tokenPayload);
 
-    // Asynchronously push to Google Sheets backup
-    syncBookingToGoogleSheet(tokenPayload);
+    // Await Google Sheets sync so Vercel Serverless container waits for execution
+    await syncBookingToGoogleSheet(tokenPayload);
 
     return res.status(201).json({
       success: true,
