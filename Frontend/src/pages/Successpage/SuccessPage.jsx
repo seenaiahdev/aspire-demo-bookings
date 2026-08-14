@@ -115,7 +115,7 @@ export default function SuccessPage({ registrationData }) {
           </p>
 
           <a
-            href="https://chat.whatsapp.com/"
+            href="https://chat.whatsapp.com/IPYgVvTAtmmIpN7iA2SRdk"
             target="_blank"
             rel="noopener noreferrer"
             className="sp-whatsapp-btn"
