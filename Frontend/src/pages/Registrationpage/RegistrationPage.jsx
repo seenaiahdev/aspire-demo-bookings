@@ -20,7 +20,7 @@ const FIELD_OPTIONS = [
   'Business Administration / Management',
   'Other'
 ];
-const YEAR_OPTIONS = ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Post Graduate / Alumni'];
+const YEAR_OPTIONS = ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduate', 'Post Graduate'];
 const DEMO_HOURS   = ['09', '10', '11', '12', '01', '02', '03', '04'];
 const MINUTES_LIST = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const ITEM_HEIGHT  = 44;

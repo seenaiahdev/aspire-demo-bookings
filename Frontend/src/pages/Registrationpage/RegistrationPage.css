@@ -870,10 +870,7 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  right: auto;
-  min-width: 240px;
-  width: max-content;
-  max-width: 340px;
+  right: 0;
   background: var(--white);
   border: 1.5px solid rgba(65,105,200,0.18);
   border-radius: var(--r-lg);
