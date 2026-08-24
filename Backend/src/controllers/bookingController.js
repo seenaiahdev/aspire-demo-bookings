@@ -23,7 +23,9 @@ function generateUserPassword(fullName, mobile) {
 async function createBooking(req, res) {
   try {
     const { fullName, mobile, email, fieldOfStudy, yearOfStudy, demoSlot } = req.body;
-    const generatedPassword = generateUserPassword(fullName, mobile);
+    // Prefix +91 country code before storing (user inputs 10-digit number)
+    const normalizedMobile = '91' + mobile.trim();
+    const generatedPassword = generateUserPassword(fullName, normalizedMobile);
 
     const isSupabaseConfigured =
       process.env.SUPABASE_URL &&
@@ -38,13 +40,13 @@ async function createBooking(req, res) {
       const { data: existingBookings, error: checkError } = await supabase
         .from(TABLE_NAME)
         .select('*')
-        .or(`email.eq.${email},mobile.eq.${mobile}`);
+        .or(`email.eq.${email},mobile.eq.${normalizedMobile}`);
 
       if (checkError) {
         console.warn('[Supabase Duplicate Check Warning]:', checkError.message);
       } else if (existingBookings && existingBookings.length > 0) {
         const isEmailDup = existingBookings.some((b) => b.email && b.email.toLowerCase() === email.toLowerCase());
-        const isMobileDup = existingBookings.some((b) => b.mobile === mobile);
+        const isMobileDup = existingBookings.some((b) => b.mobile === normalizedMobile);
 
         if (isEmailDup && isMobileDup) {
           return res.status(409).json({
@@ -72,7 +74,7 @@ async function createBooking(req, res) {
       const snakeCasePayload = {
         registration_id: registrationId,
         full_name: fullName,
-        mobile: mobile,
+        mobile: normalizedMobile,
         email: email,
         field_of_study: fieldOfStudy,
         year_of_study: yearOfStudy,
@@ -83,7 +85,7 @@ async function createBooking(req, res) {
       const camelCasePayload = {
         registrationId: registrationId,
         fullName: fullName,
-        mobile: mobile,
+        mobile: normalizedMobile,
         email: email,
         fieldOfStudy: fieldOfStudy,
         yearOfStudy: yearOfStudy,
@@ -113,7 +115,7 @@ async function createBooking(req, res) {
         const baseSnakePayload = {
           registration_id: registrationId,
           full_name: fullName,
-          mobile: mobile,
+          mobile: normalizedMobile,
           email: email,
           field_of_study: fieldOfStudy,
           year_of_study: yearOfStudy,
@@ -151,7 +153,7 @@ async function createBooking(req, res) {
     const tokenPayload = {
       registrationId,
       fullName,
-      mobile,
+      mobile: normalizedMobile,
       email,
       fieldOfStudy,
       yearOfStudy,
