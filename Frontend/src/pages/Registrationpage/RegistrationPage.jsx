@@ -394,24 +394,23 @@ export default function RegistrationPage({ onSuccess }) {
   const [showSlotPopup, setShowSlotPopup]   = useState(false);
   const [termsAccepted, setTermsAccepted]   = useState(false);
   const [termsError, setTermsError]         = useState(false);
-  const [isOtherStream, setIsOtherStream]   = useState(false);
 
   const triggerShake = () => { setIsShaking(true); setTimeout(() => setIsShaking(false), 500); };
 
   // Dynamic year options based on selected stream
   const yearOptions = useMemo(() => {
-    if (isOtherStream) return YEAR_OPTIONS_MAP['Others'];
     return YEAR_OPTIONS_MAP[formData.fieldOfStudy] || [];
-  }, [formData.fieldOfStudy, isOtherStream]);
+  }, [formData.fieldOfStudy]);
 
   // Auto-reset yearOfStudy when stream changes and current selection is no longer valid
   useEffect(() => {
+    const isOtherStream = formData.fieldOfStudy === 'Others';
     if (!isOtherStream && formData.yearOfStudy && yearOptions.length > 0 && !yearOptions.includes(formData.yearOfStudy)) {
       setFormData(p => ({ ...p, yearOfStudy: '' }));
       setErrors(p => ({ ...p, yearOfStudy: '' }));
       setTouched(p => ({ ...p, yearOfStudy: false }));
     }
-  }, [yearOptions, formData.yearOfStudy, isOtherStream]);
+  }, [yearOptions, formData.yearOfStudy, formData.fieldOfStudy]);
 
   const validateField = (name, value) => {
     if (!value || value.trim() === '') return 'Required';
@@ -430,16 +429,12 @@ export default function RegistrationPage({ onSuccess }) {
   const handleBlur   = e => { const {name,value}=e.target; setTouched(p=>({...p,[name]:true})); setErrors(p=>({...p,[name]:validateField(name,value)})); };
   const handleChange = e => {
     const {name,value}=e.target;
-    // When 'Others' is selected from stream dropdown, switch to text input mode
-    if (name === 'fieldOfStudy' && value === 'Others') {
-      setIsOtherStream(true);
-      setFormData(p=>({...p, fieldOfStudy:'', yearOfStudy:''}));
-      setTouched(p=>({...p, fieldOfStudy:true}));
-      setErrors(p=>({...p, fieldOfStudy:'', yearOfStudy:''}));
+    // When stream changes, if it is changed to Others, clear the yearOfStudy so they can type
+    if (name === 'fieldOfStudy') {
+      setFormData(p=>({...p, fieldOfStudy: value, yearOfStudy: ''}));
+      setErrors(p=>({...p, fieldOfStudy: validateField(name, value), yearOfStudy: ''}));
+      setTouched(p=>({...p, fieldOfStudy: true, yearOfStudy: false}));
       return;
-    }
-    if (name === 'fieldOfStudy' && value !== 'Others') {
-      setIsOtherStream(false);
     }
     setFormData(p=>({...p,[name]:value})); setDuplicateError(''); setTouched(p=>({...p,[name]:true})); setErrors(p=>({...p,[name]:validateField(name,value)}));
   };
@@ -603,18 +598,8 @@ export default function RegistrationPage({ onSuccess }) {
 
               <div className={`fg ${errors.fieldOfStudy&&touched.fieldOfStudy?'has-error':''} ${isFieldValid('fieldOfStudy')?'is-valid':''}`}>
                 <label htmlFor="fieldOfStudy" className="form-label">Stream <span className="req">*</span></label>
-                {isOtherStream ? (
-                  <div className="input-wrapper">
-                    <button type="button" className="input-back-btn" title="Back to stream list" onClick={() => { setIsOtherStream(false); setFormData(p=>({...p, fieldOfStudy:'', yearOfStudy:''})); setTouched(p=>({...p, fieldOfStudy:false})); setErrors(p=>({...p, fieldOfStudy:''})); }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-                    </button>
-                    <input type="text" id="fieldOfStudy" name="fieldOfStudy" className="form-input" style={{paddingLeft:'2.2rem'}} value={formData.fieldOfStudy} onChange={handleChange} onBlur={handleBlur} placeholder="Type your stream..." autoFocus/>
-                    {isFieldValid('fieldOfStudy') && <svg className="valid-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>}
-                  </div>
-                ) : (
-                  <SearchableSelect id="fieldOfStudy" name="fieldOfStudy" value={formData.fieldOfStudy}
-                    onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser} openUp/>
-                )}
+                <SearchableSelect id="fieldOfStudy" name="fieldOfStudy" value={formData.fieldOfStudy}
+                  onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser} openUp/>
                 <FieldErr name="fieldOfStudy"/>
               </div>
             </div>
@@ -623,15 +608,15 @@ export default function RegistrationPage({ onSuccess }) {
             <div className="rp-row-2">
               <div className={`fg ${errors.yearOfStudy&&touched.yearOfStudy?'has-error':''} ${isFieldValid('yearOfStudy')?'is-valid':''}`}>
                 <label htmlFor="yearOfStudy" className="form-label">Year of Study <span className="req">*</span></label>
-                {isOtherStream ? (
+                {formData.fieldOfStudy === 'Others' ? (
                   <div className="input-wrapper">
                     <svg className="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <input type="text" id="yearOfStudy" name="yearOfStudy" className="form-input" value={formData.yearOfStudy} onChange={handleChange} onBlur={handleBlur} placeholder="Type year of study..." />
+                    <input type="text" id="yearOfStudy" name="yearOfStudy" className="form-input" value={formData.yearOfStudy} onChange={handleChange} onBlur={handleBlur} placeholder="Type year of study..." autoFocus/>
                     {isFieldValid('yearOfStudy') && <svg className="valid-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>}
                   </div>
                 ) : (
                   <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
-                    onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={(formData.fieldOfStudy || isOtherStream) ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy && !isOtherStream} openUp/>
+                    onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={formData.fieldOfStudy ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy} openUp/>
                 )}
                 <FieldErr name="yearOfStudy"/>
               </div>
