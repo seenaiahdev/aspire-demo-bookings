@@ -399,6 +399,18 @@
 .required-star { color: var(--error); font-size: 0.85rem; }
 
 .input-wrapper { position: relative; display: flex; align-items: center; }
+.input-back-btn {
+  position: absolute; left: 0.5rem;
+  width: 22px; height: 22px;
+  background: var(--slate-100); border: 1px solid var(--slate-200);
+  border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2; padding: 0;
+  transition: all 0.15s ease;
+}
+.input-back-btn svg { width: 13px; height: 13px; stroke: var(--slate-500); }
+.input-back-btn:hover { background: var(--blue-600); border-color: var(--blue-600); }
+.input-back-btn:hover svg { stroke: #fff; }
 .input-icon {
   position: absolute; left: 0.75rem;
   width: 15px; height: 15px;

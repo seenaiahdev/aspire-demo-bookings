@@ -18,11 +18,11 @@ const FIELD_OPTIONS = [
 ];
 
 const YEAR_OPTIONS_MAP = {
-  'B.Tech / B.E':          ['1st Year', '2nd Year', '3rd Year', '4th Year'],
-  'M.Tech / M.E':          ['1st Year', '2nd Year'],
-  'BCA / MCA':             ['1st Year', '2nd Year', '3rd Year'],
-  'Degree (B.Sc, B.Com)':  ['1st Year', '2nd Year', '3rd Year'],
-  'Others':                ['1st Year', '2nd Year', '3rd Year', '4th Year'],
+  'B.Tech / B.E':          ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Completed'],
+  'M.Tech / M.E':          ['1st Year', '2nd Year', 'Completed'],
+  'BCA / MCA':             ['1st Year', '2nd Year', '3rd Year', 'Completed'],
+  'Degree (B.Sc, B.Com)':  ['1st Year', '2nd Year', '3rd Year', 'Completed'],
+  'Others':                ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Completed'],
 };
 const DEMO_HOURS   = ['09', '10', '11', '12', '01', '02', '03', '04'];
 const MINUTES_LIST = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -297,13 +297,15 @@ export default function RegistrationPage({ onSuccess }) {
   const [showSlotPopup, setShowSlotPopup]   = useState(false);
   const [termsAccepted, setTermsAccepted]   = useState(false);
   const [termsError, setTermsError]         = useState(false);
+  const [isOtherStream, setIsOtherStream]   = useState(false);
 
   const triggerShake = () => { setIsShaking(true); setTimeout(() => setIsShaking(false), 500); };
 
   // Dynamic year options based on selected stream
   const yearOptions = useMemo(() => {
+    if (isOtherStream) return YEAR_OPTIONS_MAP['Others'];
     return YEAR_OPTIONS_MAP[formData.fieldOfStudy] || [];
-  }, [formData.fieldOfStudy]);
+  }, [formData.fieldOfStudy, isOtherStream]);
 
   // Auto-reset yearOfStudy when stream changes and current selection is no longer valid
   useEffect(() => {
@@ -329,7 +331,21 @@ export default function RegistrationPage({ onSuccess }) {
   const isFieldValid = n => Boolean(formData[n]) && !errors[n] && !validateField(n, formData[n]);
 
   const handleBlur   = e => { const {name,value}=e.target; setTouched(p=>({...p,[name]:true})); setErrors(p=>({...p,[name]:validateField(name,value)})); };
-  const handleChange = e => { const {name,value}=e.target; setFormData(p=>({...p,[name]:value})); setDuplicateError(''); setTouched(p=>({...p,[name]:true})); setErrors(p=>({...p,[name]:validateField(name,value)})); };
+  const handleChange = e => {
+    const {name,value}=e.target;
+    // When 'Others' is selected from stream dropdown, switch to text input mode
+    if (name === 'fieldOfStudy' && value === 'Others') {
+      setIsOtherStream(true);
+      setFormData(p=>({...p, fieldOfStudy:'', yearOfStudy:''}));
+      setTouched(p=>({...p, fieldOfStudy:true}));
+      setErrors(p=>({...p, fieldOfStudy:'', yearOfStudy:''}));
+      return;
+    }
+    if (name === 'fieldOfStudy' && value !== 'Others') {
+      setIsOtherStream(false);
+    }
+    setFormData(p=>({...p,[name]:value})); setDuplicateError(''); setTouched(p=>({...p,[name]:true})); setErrors(p=>({...p,[name]:validateField(name,value)}));
+  };
 
   const handleSlotConfirm = (slot) => {
     setFormData(p => ({...p, demoSlot: slot}));
@@ -490,8 +506,18 @@ export default function RegistrationPage({ onSuccess }) {
 
               <div className={`fg ${errors.fieldOfStudy&&touched.fieldOfStudy?'has-error':''} ${isFieldValid('fieldOfStudy')?'is-valid':''}`}>
                 <label htmlFor="fieldOfStudy" className="form-label">Stream <span className="req">*</span></label>
-                <SearchableSelect id="fieldOfStudy" name="fieldOfStudy" value={formData.fieldOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser} openUp/>
+                {isOtherStream ? (
+                  <div className="input-wrapper">
+                    <button type="button" className="input-back-btn" title="Back to stream list" onClick={() => { setIsOtherStream(false); setFormData(p=>({...p, fieldOfStudy:'', yearOfStudy:''})); setTouched(p=>({...p, fieldOfStudy:false})); setErrors(p=>({...p, fieldOfStudy:''})); }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <input type="text" id="fieldOfStudy" name="fieldOfStudy" className="form-input" style={{paddingLeft:'2.2rem'}} value={formData.fieldOfStudy} onChange={handleChange} onBlur={handleBlur} placeholder="Type your stream..." autoFocus/>
+                    {isFieldValid('fieldOfStudy') && <svg className="valid-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>}
+                  </div>
+                ) : (
+                  <SearchableSelect id="fieldOfStudy" name="fieldOfStudy" value={formData.fieldOfStudy}
+                    onChange={handleChange} onBlur={handleBlur} options={FIELD_OPTIONS} placeholder="Select stream..." icon={iconUser} openUp/>
+                )}
                 <FieldErr name="fieldOfStudy"/>
               </div>
             </div>
@@ -501,7 +527,7 @@ export default function RegistrationPage({ onSuccess }) {
               <div className={`fg ${errors.yearOfStudy&&touched.yearOfStudy?'has-error':''} ${isFieldValid('yearOfStudy')?'is-valid':''}`}>
                 <label htmlFor="yearOfStudy" className="form-label">Year of Study <span className="req">*</span></label>
                 <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={formData.fieldOfStudy ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy} openUp/>
+                  onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={(formData.fieldOfStudy || isOtherStream) ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy && !isOtherStream} openUp/>
                 <FieldErr name="yearOfStudy"/>
               </div>
 
