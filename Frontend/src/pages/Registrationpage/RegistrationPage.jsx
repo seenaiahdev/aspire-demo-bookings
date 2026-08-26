@@ -309,12 +309,12 @@ export default function RegistrationPage({ onSuccess }) {
 
   // Auto-reset yearOfStudy when stream changes and current selection is no longer valid
   useEffect(() => {
-    if (formData.yearOfStudy && yearOptions.length > 0 && !yearOptions.includes(formData.yearOfStudy)) {
+    if (!isOtherStream && formData.yearOfStudy && yearOptions.length > 0 && !yearOptions.includes(formData.yearOfStudy)) {
       setFormData(p => ({ ...p, yearOfStudy: '' }));
       setErrors(p => ({ ...p, yearOfStudy: '' }));
       setTouched(p => ({ ...p, yearOfStudy: false }));
     }
-  }, [yearOptions, formData.yearOfStudy]);
+  }, [yearOptions, formData.yearOfStudy, isOtherStream]);
 
   const validateField = (name, value) => {
     if (!value || value.trim() === '') return 'Required';
@@ -526,8 +526,16 @@ export default function RegistrationPage({ onSuccess }) {
             <div className="rp-row-2">
               <div className={`fg ${errors.yearOfStudy&&touched.yearOfStudy?'has-error':''} ${isFieldValid('yearOfStudy')?'is-valid':''}`}>
                 <label htmlFor="yearOfStudy" className="form-label">Year of Study <span className="req">*</span></label>
-                <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={(formData.fieldOfStudy || isOtherStream) ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy && !isOtherStream} openUp/>
+                {isOtherStream ? (
+                  <div className="input-wrapper">
+                    <svg className="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <input type="text" id="yearOfStudy" name="yearOfStudy" className="form-input" value={formData.yearOfStudy} onChange={handleChange} onBlur={handleBlur} placeholder="Type year of study..." />
+                    {isFieldValid('yearOfStudy') && <svg className="valid-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>}
+                  </div>
+                ) : (
+                  <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
+                    onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={(formData.fieldOfStudy || isOtherStream) ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy && !isOtherStream} openUp/>
+                )}
                 <FieldErr name="yearOfStudy"/>
               </div>
 
