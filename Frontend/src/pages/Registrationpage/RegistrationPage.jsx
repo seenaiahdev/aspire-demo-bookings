@@ -10,17 +10,20 @@ import { registerDemoBooking } from '../../services/api';
 import './RegistrationPage.css';
 
 const FIELD_OPTIONS = [
-  'Computer Science & Engineering',
-  'Data Science & Artificial Intelligence',
-  'Information Technology',
-  'Electronics & Communication',
-  'Electrical & Electronics',
-  'Mechanical Engineering',
-  'Civil Engineering',
-  'Business Administration / Management',
-  'Other'
+  'B.Tech / B.E',
+  'M.Tech / M.E',
+  'BCA / MCA',
+  'Degree (B.Sc, B.Com)',
+  'Others'
 ];
-const YEAR_OPTIONS = ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduate', 'Post Graduate'];
+
+const YEAR_OPTIONS_MAP = {
+  'B.Tech / B.E':          ['1st Year', '2nd Year', '3rd Year', '4th Year'],
+  'M.Tech / M.E':          ['1st Year', '2nd Year'],
+  'BCA / MCA':             ['1st Year', '2nd Year', '3rd Year'],
+  'Degree (B.Sc, B.Com)':  ['1st Year', '2nd Year', '3rd Year'],
+  'Others':                ['1st Year', '2nd Year', '3rd Year', '4th Year'],
+};
 const DEMO_HOURS   = ['09', '10', '11', '12', '01', '02', '03', '04'];
 const MINUTES_LIST = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const ITEM_HEIGHT  = 44;
@@ -297,6 +300,20 @@ export default function RegistrationPage({ onSuccess }) {
 
   const triggerShake = () => { setIsShaking(true); setTimeout(() => setIsShaking(false), 500); };
 
+  // Dynamic year options based on selected stream
+  const yearOptions = useMemo(() => {
+    return YEAR_OPTIONS_MAP[formData.fieldOfStudy] || [];
+  }, [formData.fieldOfStudy]);
+
+  // Auto-reset yearOfStudy when stream changes and current selection is no longer valid
+  useEffect(() => {
+    if (formData.yearOfStudy && yearOptions.length > 0 && !yearOptions.includes(formData.yearOfStudy)) {
+      setFormData(p => ({ ...p, yearOfStudy: '' }));
+      setErrors(p => ({ ...p, yearOfStudy: '' }));
+      setTouched(p => ({ ...p, yearOfStudy: false }));
+    }
+  }, [yearOptions, formData.yearOfStudy]);
+
   const validateField = (name, value) => {
     if (!value || value.trim() === '') return 'Required';
     if (name === 'email'  && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Invalid email';
@@ -484,7 +501,7 @@ export default function RegistrationPage({ onSuccess }) {
               <div className={`fg ${errors.yearOfStudy&&touched.yearOfStudy?'has-error':''} ${isFieldValid('yearOfStudy')?'is-valid':''}`}>
                 <label htmlFor="yearOfStudy" className="form-label">Year of Study <span className="req">*</span></label>
                 <SearchableSelect id="yearOfStudy" name="yearOfStudy" value={formData.yearOfStudy}
-                  onChange={handleChange} onBlur={handleBlur} options={YEAR_OPTIONS} placeholder="Select year..." icon={iconCal} openUp/>
+                  onChange={handleChange} onBlur={handleBlur} options={yearOptions} placeholder={formData.fieldOfStudy ? 'Select year...' : 'Select stream first...'} icon={iconCal} disabled={!formData.fieldOfStudy} openUp/>
                 <FieldErr name="yearOfStudy"/>
               </div>
 
