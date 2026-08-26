@@ -309,7 +309,7 @@
 .slot-trigger-btn.has-slot svg:first-child { stroke: var(--success); }
 .slot-trigger-btn.has-error { border-color: var(--error); background: var(--error-bg); }
 .slot-placeholder-text { flex:1; font-size:0.82rem; color:var(--slate-400); font-weight:400; }
-.slot-filled-text { flex:1; font-size:0.82rem; color:var(--dark); font-weight:600; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.slot-filled-text { flex:1; font-size:0.78rem; color:var(--dark); font-weight:600; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .slot-clear-inline {
   background: none; border: none; cursor: pointer;
   padding: 2px; border-radius: 6px; color: var(--slate-400);
