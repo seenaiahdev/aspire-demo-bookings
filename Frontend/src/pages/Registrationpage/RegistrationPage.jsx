@@ -35,11 +35,11 @@ function getUpcomingSlot(now = new Date()) {
 
   let targetDay; // 3 = Wed, 0 = Sun
 
-  const isAfterSun5PM = (day === 0 && (hours > 17 || (hours === 17 && minutes >= 0)));
-  const isBeforeWed5PM = (day === 3 && (hours < 17 || (hours === 17 && minutes === 0)));
+  const isAfterSun6PM = (day === 0 && (hours > 18 || (hours === 18 && minutes >= 0)));
+  const isBeforeWed6PM = (day === 3 && (hours < 18 || (hours === 18 && minutes === 0)));
   const isMonOrTue = (day === 1 || day === 2);
 
-  if (isAfterSun5PM || isMonOrTue || isBeforeWed5PM) {
+  if (isAfterSun6PM || isMonOrTue || isBeforeWed6PM) {
     targetDay = 3; // Wednesday
   } else {
     targetDay = 0; // Sunday
@@ -49,7 +49,7 @@ function getUpcomingSlot(now = new Date()) {
   let daysToAdd = (targetDay - day + 7) % 7;
 
   targetDate.setDate(now.getDate() + daysToAdd);
-  targetDate.setHours(17, 0, 0, 0);
+  targetDate.setHours(18, 0, 0, 0);
 
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -59,7 +59,7 @@ function getUpcomingSlot(now = new Date()) {
   const monthName = months[targetDate.getMonth()];
   const yearNum = targetDate.getFullYear();
 
-  return `${dayName}, ${dayNum} ${monthName} ${yearNum} — 5:00 PM`;
+  return `${dayName}, ${dayNum} ${monthName} ${yearNum} — 6:00 PM`;
 }
 
 
