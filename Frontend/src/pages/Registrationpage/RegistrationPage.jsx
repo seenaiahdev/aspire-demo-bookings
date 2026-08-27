@@ -33,20 +33,13 @@ function getUpcomingSlot(now = new Date()) {
   const hours = now.getHours();
   const minutes = now.getMinutes();
 
-  let targetDay; // 3 = Wed, 0 = Sun
-
-  const isAfterSun6PM = (day === 0 && (hours > 18 || (hours === 18 && minutes >= 0)));
-  const isBeforeWed6PM = (day === 3 && (hours < 18 || (hours === 18 && minutes === 0)));
-  const isMonOrTue = (day === 1 || day === 2);
-
-  if (isAfterSun6PM || isMonOrTue || isBeforeWed6PM) {
-    targetDay = 3; // Wednesday
-  } else {
-    targetDay = 0; // Sunday
-  }
-
   const targetDate = new Date(now);
-  let daysToAdd = (targetDay - day + 7) % 7;
+  let daysToAdd = (0 - day + 7) % 7; // Distance to upcoming Sunday
+
+  // If today is Sunday (0) and it is after 6:00 PM, we want the next week's Sunday
+  if (daysToAdd === 0 && (hours > 18 || (hours === 18 && minutes >= 0))) {
+    daysToAdd = 7;
+  }
 
   targetDate.setDate(now.getDate() + daysToAdd);
   targetDate.setHours(18, 0, 0, 0);
