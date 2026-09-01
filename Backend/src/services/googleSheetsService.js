@@ -20,7 +20,6 @@ async function syncBookingToGoogleSheet(bookingData) {
       fieldOfStudy: bookingData.fieldOfStudy || bookingData.field_of_study,
       yearOfStudy: bookingData.yearOfStudy || bookingData.year_of_study,
       demoSlot: bookingData.demoSlot || bookingData.demo_slot,
-      password: bookingData.password || bookingData.generated_password,
       createdAt: bookingData.createdAt || bookingData.created_at || new Date().toISOString(),
     };
 
